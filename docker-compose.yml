@@ -1,0 +1,19 @@
+version: "2"
+services:
+  registry:
+    build: .
+    image: registry
+    container_name: registry
+    ports:
+      - "8084:8084"
+      - "443:443"
+    depends_on:
+      - mongo
+    volumes:
+        - ./resources:/resources   
+  mongo:
+    image: mongo
+    volumes:
+        - ./data:/data/db
+    ports:
+      - "27017:27017"

@@ -1,0 +1,2346 @@
+{
+	"info": {
+		"_postman_id": "73d70c38-a193-431d-8a6f-6b267be61516",
+		"name": "Model Registry",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "INFO",
+			"item": [
+				{
+					"name": "LOGIN as SuperAdmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"postman.setEnvironmentVariable(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "API docs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"demo\", jsonData);",
+									"tests[\"demo = \" + jsonData] = true;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/docs",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"docs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "API docs HTML",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"demo\", jsonData);",
+									"tests[\"demo = \" + jsonData] = true;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/docs.html",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"docs.html"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "API error codes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"demo\", jsonData);",
+									"tests[\"demo = \" + jsonData] = true;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/errors",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"errors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "API info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"demo\", jsonData);",
+									"tests[\"demo = \" + jsonData] = true;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/info",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"info"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DEMOS",
+			"item": [
+				{
+					"name": "LOGIN as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"postman.setEnvironmentVariable(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST demo contents (users, models, tags)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);",
+									"",
+									"if(data.users) pm.environment.set('users', JSON.stringify(data.users));",
+									"if(data.tags) pm.environment.set('tags', JSON.stringify(data.tags));",
+									"if(data.models) pm.environment.set('models', JSON.stringify(data.models));",
+									"if(data.datasets) pm.environment.set('datasets', JSON.stringify(data.datasets));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/demo",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"demo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET demo contents",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);",
+									"",
+									"if(data.users) pm.environment.set('users', JSON.stringify(data.users));",
+									"if(data.tags) pm.environment.set('tags', JSON.stringify(data.tags));",
+									"if(data.models) pm.environment.set('models', JSON.stringify(data.models));",
+									"if(data.datasets) pm.environment.set('datasets', JSON.stringify(data.datasets));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/demo",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"demo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE demo contents",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/demo",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"demo"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TENANTS",
+			"item": [
+				{
+					"name": "GET all tenants",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = JSON.parse(responseBody);",
+									"if(data.docs) pm.environment.set('tenant', data.docs[0]._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "ifhidhfudshuf8"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/tenants",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tenants"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get one tenant",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "ifhidhfudshuf8",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/tenants/{{tenant}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tenants",
+								"{{tenant}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a new tenant",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"tenant\", JSON.parse(responseBody)._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "ifhidhfudshuf8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"_id\": \"registry-tenat-test\",\r\n    \"organization\": \"Measurify org\",\r\n    \"address\": \"Measurify Street, Genova\",\r\n    \"email\": \"info@measurify.org\",\r\n    \"phone\": \"+39103218793817\",\r\n    \"admin_username\": \"pluto\",\r\n    \"admin_password\": \"pippo\",\r\n    \"passwordhash\": \"true\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/tenants/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tenants",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGIN as admin on the new tenant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"pluto\",\n\t\"password\" : \"pippo\",\n\t\"tenant\": \"{{tenant}}\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT a tenant",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"tenant\", JSON.parse(responseBody)._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "ifhidhfudshuf8"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"organization\": \"Measurify org 2\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/tenants/{{tenant}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tenants",
+								"{{tenant}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a tenant",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "ifhidhfudshuf8"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/tenants/{{tenant}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tenants",
+								"{{tenant}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "LOGIN",
+			"item": [
+				{
+					"name": "LOGIN as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGIN as a regular user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var users = JSON.parse(pm.environment.get(\"users\"));",
+									"",
+									"pm.environment.set('regular_user_username', users[1].username);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"{{regular_user_username}}\",\n\t\"password\" : \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "USERS",
+			"item": [
+				{
+					"name": "LOGIN as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET the list of users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a new user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"user\", JSON.parse(responseBody)._id);",
+									"pm.environment.set(\"username\", JSON.parse(responseBody).username);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": " {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"user-100\",\n\t\"password\" : \"password\",\n\t\"role\" : \"regular\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a list new users",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n\t{\n\t\t\"username\" : \"user-101\",\n\t\t\"password\" : \"password\",\n\t\t\"role\" : \"regular\"\n\t},\n\t{\n\t\t\"username\" : \"user-102\",\n\t\t\"password\" : \"password\",\n\t\t\"role\" : \"regular\"\n\t},\n\t{\n\t\t\"username\" : \"user-103\",\n\t\t\"password\" : \"password\",\n\t\t\"role\" : \"regular\"\n\t},\n\t{\n\t\t\"username\" : \"user-104\",\n\t\t\"password\" : \"password\",\n\t\t\"role\" : \"regular\"\n\t}\n]"
+						},
+						"url": {
+							"raw": "{{url}}/v1/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGIN as new user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"user-100\",\n\t\"password\" : \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT to modify password (with id)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"password\": \"new password\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/users/{{user}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{user}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGIN as user with modified password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"user-100\",\n\t\"password\" : \"new password\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT to modify password (with username)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"password\": \"new password 2\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/users/{{username}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGIN as user with new modified password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"user-100\",\n\t\"password\" : \"new password 2\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var users = JSON.parse(pm.environment.get(\"users\"));",
+									"pm.environment.set('user_id', users[1]._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/users/{{user_id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TAGS",
+			"item": [
+				{
+					"name": "LOGIN as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all tags",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/tags",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a new tag",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"tag\", JSON.parse(responseBody)._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n\t\"_id\": \"test_tag\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/tags",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET a tag",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/tags/{{tag}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tags",
+								"{{tag}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a list of new tags",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n  { \"_id\": \"tagged-tag-1\" },\r\n  { \"_id\": \"tagged-tag-2\" },\r\n  { \"_id\": \"tagged-tag-3\" },\r\n  { \"_id\": \"tagged-tag-4\" }\r\n]"
+						},
+						"url": {
+							"raw": "{{url}}/v1/tags",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a tag (not used)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/tags/{{tag}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tags",
+								"{{tag}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DATASET",
+			"item": [
+				{
+					"name": "LOGIN as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all datasets",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/models",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a new dataset",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var users = JSON.parse(pm.environment.get(\"users\"));",
+									"var tags = JSON.parse(pm.environment.get(\"tags\"));",
+									"",
+									"pm.environment.set('user_1', users[1]._id);",
+									"pm.environment.set('user_2', users[2]._id);",
+									"",
+									"pm.environment.set('tag_1', tags[0]._id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"dataset\", JSON.parse(responseBody)._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"name\": \"MyDataset\",\n    \"users\": [\n        \"{{user_1}}\",\n        \"{{user_2}}\"\n    ],\n    \"metadata\": [\n        { \"name\" : \"meta_1\", \"value\": \"value_1\" },\n        { \"name\" : \"meta_2\", \"value\": \"value_2\" },\n        { \"name\" : \"meta_3\", \"value\": \"value_3\" }\n    ],\n    \"visibility\": \"public\",\n    \"tags\": [\n        \"{{tag_1}}\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/datasets",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"datasets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET a dataset",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/datasets/{{dataset}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"datasets",
+								"{{dataset}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT a dataset",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var users = JSON.parse(pm.environment.get(\"users\"));",
+									"var tags = JSON.parse(pm.environment.get(\"tags\"));",
+									"",
+									"pm.environment.set('user_1', users[1]._id);",
+									"pm.environment.set('user_2', users[2]._id);",
+									"pm.environment.set('user_3', users[3]._id);",
+									"",
+									"pm.environment.set('tag_1', tags[0]._id);",
+									"pm.environment.set('tag_2', tags[1]._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"users\": {\n        \"remove\": [\"{{user_1}}\", \"{{user_2}}\"],\n        \"add\": [\"{{user_3}}\"]\n    },\n    \"tags\": {\n        \"remove\": [\"{{tag_1}}\"],\n        \"add\": [\"{{tag_2}}\"]\n    },\n    \"metadata\": {\n        \"remove\": [\n            { \"name\" : \"meta_1\", \"value\": \"value_1\" },\n            { \"name\" : \"meta_2\", \"value\": \"value_3\" }\n        ],\n        \"add\": [\n            { \"name\" : \"meta_3\", \"value\": \"value_7\" },\n            { \"name\" : \"meta_4\", \"value\": \"value_8\" }\n        ]\n    },\n    \"visibility\": \"private\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/datasets/{{dataset}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"datasets",
+								"{{dataset}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a dataset",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/datasets/{{dataset}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"datasets",
+								"{{dataset}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "MODELS",
+			"item": [
+				{
+					"name": "LOGIN as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all models",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/models",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a new model",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var users = JSON.parse(pm.environment.get(\"users\"));",
+									"var tags = JSON.parse(pm.environment.get(\"tags\"));",
+									"var datasets = JSON.parse(pm.environment.get(\"datasets\"));",
+									"",
+									"pm.environment.set('user_1', users[1]._id);",
+									"pm.environment.set('user_2', users[2]._id);",
+									"",
+									"pm.environment.set('tag_1', tags[0]._id);",
+									"",
+									"pm.environment.set('dataset_1', datasets[0]._id);",
+									"pm.environment.set('dataset_2', datasets[1]._id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"model\", JSON.parse(responseBody)._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"name\": \"MyModel2\",\n    \"users\": [\n        \"{{user_1}}\",\n        \"{{user_2}}\"\n    ],\n    \"datasets\": [\n        \"{{dataset_1}}\"\n    ], \n    \"status\": \"training\",\n    \"metadata\": [\n        { \"name\" : \"meta_1\", \"value\": \"value_1\" },\n        { \"name\" : \"meta_2\", \"value\": \"value_2\" },\n        { \"name\" : \"meta_3\", \"value\": \"value_3\" }\n    ],\n    \"visibility\": \"public\",\n    \"tags\": [\n        \"{{tag_1}}\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/models",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET a model",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/models/{{model}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								"{{model}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT a model",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var users = JSON.parse(pm.environment.get(\"users\"));",
+									"var tags = JSON.parse(pm.environment.get(\"tags\"));",
+									"",
+									"pm.environment.set('user_1', users[1]._id);",
+									"pm.environment.set('user_2', users[2]._id);",
+									"pm.environment.set('user_3', users[3]._id);",
+									"",
+									"pm.environment.set('tag_1', tags[0]._id);",
+									"pm.environment.set('tag_2', tags[1]._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"users\": {\n        \"remove\": [\"{{user_1}}\", \"{{user_2}}\"],\n        \"add\": [\"{{user_3}}\"]\n    },\n    \"datasets\": {\n        \"remove\": [\"{{dataset_1}}\"],\n        \"add\": [\"{{dataset_2}}\"]\n    },\n    \"tags\": {\n        \"remove\": [\"{{tag_1}}\"],\n        \"add\": [\"{{tag_2}}\"]\n    },\n    \"status\": \"deploy\",\n    \"metadata\": {\n        \"remove\": [\n            { \"name\" : \"meta_1\", \"value\": \"value_1\" },\n            { \"name\" : \"meta_2\", \"value\": \"value_3\" }\n        ],\n        \"add\": [\n            { \"name\" : \"meta_3\", \"value\": \"value_7\" },\n            { \"name\" : \"meta_4\", \"value\": \"value_8\" }\n        ]\n    },\n    \"visibility\": \"private\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/models/{{model}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								"{{model}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a model",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/models/{{model}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								"{{model}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "VERSIONS (DATASET)",
+			"item": [
+				{
+					"name": "LOGIN as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a new version",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var datasets = JSON.parse(pm.environment.get(\"datasets\"));",
+									"pm.environment.set('dataset', datasets[0]._id);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"version\", JSON.parse(responseBody).versions[2].original);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/Users/riccardo.berta/Source/PathFollowing/Output/04_lidar_multipla/test/run_logs/Player-6.log"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/v1/datasets/{{dataset}}/versions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"datasets",
+								"{{dataset}}",
+								"versions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET a version",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/datasets/{{dataset}}/versions/{{original}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"datasets",
+								"{{dataset}}",
+								"versions",
+								"{{original}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a version",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/datasets/{{dataset}}/versions/{{original}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"datasets",
+								"{{dataset}}",
+								"versions",
+								"{{original}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "VERSIONS (MODEL)",
+			"item": [
+				{
+					"name": "LOGIN as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a new version",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var models = JSON.parse(pm.environment.get(\"models\"));",
+									"pm.environment.set('model', models[0]._id);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"original\", JSON.parse(responseBody).versions[1].original);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/Users/riccardo.berta/Source/PathFollowing/Output/04_lidar_multipla/test/run_logs/Player-6.log"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/v1/models/{{model}}/versions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								"{{model}}",
+								"versions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET a version",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/models/{{model}}/versions/{{original}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								"{{model}}",
+								"versions",
+								"{{original}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a version",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/models/{{model}}/versions/{{original}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"models",
+								"{{model}}",
+								"versions",
+								"{{original}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LOGS",
+			"item": [
+				{
+					"name": "GET Logs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "{{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/log",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"log"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
