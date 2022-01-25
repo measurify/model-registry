@@ -30,11 +30,11 @@ It is possible to get information about routes and data models from the followin
 
 The Model Registry introduces a few concepts that describe and facilitate the full lifecycle of a ML model or dataset:
 
-**Model**: an ML model created from an experiment to be registered on the system
-**Dataset**: a dataset used to train models
-**Version**: each registered model\dataset can have many versions, which is a specific file (e.g. a .onxx file for a model, a .zip file for a dataset)
-**Metadata**: a list of name-value pairs that can be used to annotate models and datasets, including training condition, algorithm descriptions, hyperparameters employed and any relevant information useful for the user to apply the model or use the dataset.
-**Tag**: a label that can be used to categorize models/datasets
+- **Model**: an ML model created from an experiment to be registered on the system
+- **Dataset**: a dataset used to train models
+- **Version**: each registered model\dataset can have many versions, which is a specific file (e.g. a .onxx file for a model, a .zip file for a dataset)
+- **Metadata**: a list of name-value pairs that can be used to annotate models and datasets, including training condition, algorithm descriptions, hyperparameters employed and any relevant information useful for the user to apply the model or use the dataset
+- **Tag**: a label that can be used to categorize models/datasets
 
 ## Workflow
 
@@ -55,7 +55,7 @@ To create a new tenant:
         "admin_username": "pluto",
         "admin_password": "pippo",
         "passwordhash": "true"
-}
+    }
 
 The call needs the **API_TOKEN** in the header parameter:
 
