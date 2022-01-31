@@ -25,7 +25,10 @@ exports.init = async function(mode){
         const mongod = new MongoMemoryServer();
         uri = await mongod.getUri();
     }
-    else uri = process.env.DATABASE
+    else {
+        if (process.argv.includes('docker')) process.env.DATABASE = process.env.DATABASE.replace('localhost', 'database');
+        uri = process.env.DATABASE;
+    }
 
     // Connect to tenants catalogue database
     while(!go) {

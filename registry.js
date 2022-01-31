@@ -12,6 +12,7 @@ const run = async function() {
   require('dotenv').config({ path: './init/variables.env' });
 
   // Init database
+  
   const database = require('./database.js');
   await database.init('prod');
   

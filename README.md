@@ -13,12 +13,20 @@ The file registry.postman_collection.json contains examples of calls for the [Po
 
 Clone code and run the container
 
-    git clone https://github.com/measurify/model-registry
-    docker-compose up 
+    git clone https://github.com/measurify/model-registry registry
+    cd registry
+    docker-compose up -d
 
 to see logs:
 
     sudo docker logs registry
+
+to update the registry:
+
+    (sudo docker system prune -a)
+    cd ~/registry
+    sudo git pull
+    sudo docker-compose up -d --build
 
 ## Documentation
 
