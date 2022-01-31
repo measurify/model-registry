@@ -343,14 +343,14 @@ Use Certbot (modify in order to provide your domain)
 
 Copy certificates
 
-    sudo cp /etc/letsencrypt/live/{{url}}/fullchain.pem ~/registry/resources/certificate.pem
+    sudo cp /etc/letsencrypt/live/{{url}}/fullchain.pem ~/registry/resources/fullchain.pem
     sudo cp /etc/letsencrypt/live/{{url}}/privkey.pem ~/registry/resources/key.pem
 
 Update certificates
 
     sudo docker stop registry
     sudo certbot certonly --standalone --preferred-challenges http -d {{url}}
-    sudo cp /etc/letsencrypt/live/{{url}}/fullchain.pem ~/registry/resources/certificate.pem
-    sudo cp /etc/letsencrypt/live/{{url}}/privkey.pem ~/registry/resources/key.pem
+    sudo cp /etc/letsencrypt/live/{{url}}/fullchain.pem ~/registry/resources/fullchain.pem
+    sudo cp /etc/letsencrypt/live/{{url}}/privkey.pem ~/registry/resources/privkey.pem
 
 Finally update the Registry image.
