@@ -23,10 +23,15 @@ to see logs:
 
 to update the registry:
 
-    (sudo docker system prune -a)
+    sudo docker kill $(sudo docker ps -q)
+    sudo docker system prune -a
     cd ~/registry
     sudo git pull
     sudo docker-compose up -d --build
+
+to get info:
+
+    sudo docker exec -it registry pm2 show registry 
 
 ## Documentation
 
@@ -297,24 +302,6 @@ The Model Registry is developed using [Node JS](https://nodejs.org/en/) and [Mon
 [Install Docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
 [Install Docker Compose](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-16-04)
 
-Get the API
-    cd ~
-    mkdir ~/www
-    cd ~/www
-    sudo git clone https://github.com/measurify/model-registry registry
-
-Run API
-
-    cd ~/www/registry
-    sudo docker-compose up -d
-
-Update API
-
-    (sudo docker system prune -a)
-    cd ~/www/registry
-    sudo git pull
-    sudo docker-compose up -d --build
-
 There is a configuration file **\init\variable.env** which can be edited in order to specify several features:
 
     VERSION=v1
@@ -336,6 +323,8 @@ There is a configuration file **\init\variable.env** which can be edited in orde
 
 In particular, the connection string with the database and administrator credential (at startup the registry will create a admin user with these credential), the expiration time of tokens, the log level, the secret word for the HTTPS certificate file, the secret word for the JWT token.
 
+Then you can follow the Quick Start instruction to get the Registry.
+
 The Registry can support both HTTP and HTTPS. Without certificate, the registry starts using a self-signed certificate (stored in the resources forlder) or in HTTP (if also the self-signed certificate is missing). It is reccomended to get a valid certificate from a authority. In the following, we provide instruction to add a certificate from [Let's Encript](https://letsencrypt.org/), a free, automated and open Certificate Authority. Detailed instruction can be found at [Certbot instruction](https://certbot.eff.org/instructions)
 
 Install Certbot
@@ -354,14 +343,14 @@ Use Certbot (modify in order to provide your domain)
 
 Copy certificates
 
-    sudo cp /etc/letsencrypt/live/{{url}}/fullchain.pem ~/www/registry/resources/certificate.pem
-    sudo cp /etc/letsencrypt/live/{{url}}/privkey.pem ~/www/registry/resources/key.pem
+    sudo cp /etc/letsencrypt/live/{{url}}/fullchain.pem ~/registry/resources/certificate.pem
+    sudo cp /etc/letsencrypt/live/{{url}}/privkey.pem ~/registry/resources/key.pem
 
 Update certificates
 
     sudo docker stop registry
     sudo certbot certonly --standalone --preferred-challenges http -d {{url}}
-    sudo cp /etc/letsencrypt/live/{{url}}/fullchain.pem ~/www/registry/resources/certificate.pem
-    sudo cp /etc/letsencrypt/live/{{url}}/privkey.pem ~/www/registry/resources/key.pem
-    sudo docker rmi Image registry
-    sudo docker-compose up -d
+    sudo cp /etc/letsencrypt/live/{{url}}/fullchain.pem ~/registry/resources/certificate.pem
+    sudo cp /etc/letsencrypt/live/{{url}}/privkey.pem ~/registry/resources/key.pem
+
+Finally update the Registry image.
