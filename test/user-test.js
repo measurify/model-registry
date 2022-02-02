@@ -30,10 +30,10 @@ describe('/GET users', () => {
         await factory.createUser("test-username-1", "test-password-1");
         await factory.createUser("test-username-2", "test-password-2");
         const res = await chai.request(server).keepOpen().get('/v1/users').set('Authorization', await factory.getUserToken(user));
-        res.should.have.status(errors.restricted_access_read.status);
+        res.should.have.status(errors.only_administrator.status);
         res.body.should.be.a('object');
         res.body.message.should.be.a('string');
-        res.body.message.should.be.eql(errors.restricted_access_read.message);
+        res.body.message.should.be.eql(errors.only_administrator.message);
     });
 
     it('it should GET a specific user', async () => {
@@ -48,10 +48,10 @@ describe('/GET users', () => {
         const regular = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
         const user = await factory.createUser("test-username-1", "test-password-1");
         const res = await chai.request(server).keepOpen().get('/v1/users/' + user._id).set('Authorization', await factory.getUserToken(regular));
-        res.should.have.status(errors.restricted_access_read.status);
+        res.should.have.status(errors.only_administrator.status);
         res.body.should.be.a('object');
         res.body.message.should.be.a('string');
-        res.body.message.should.be.eql(errors.restricted_access_read.message);
+        res.body.message.should.be.eql(errors.only_administrator.message);
     });
 
     it('it should not GET a fake user', async () => {
@@ -204,9 +204,9 @@ describe('/DELETE users', () => {
         const users_before = await before.User.find();
         users_before.length.should.be.eql(2);
         const res = await chai.request(server).keepOpen().delete('/v1/users/' + user._id).set('Authorization', await factory.getUserToken(no_admin));
-        res.should.have.status(errors.restricted_access_read.status);
+        res.should.have.status(errors.only_administrator.status);
         res.body.should.be.a('object');
-        res.body.message.should.contain(errors.restricted_access_read.message);
+        res.body.message.should.contain(errors.only_administrator.message);
         const users_after = await before.User.find();
         users_after.length.should.be.eql(2);
     });

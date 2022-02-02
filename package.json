@@ -6,7 +6,7 @@
   "host": "localhost",
   "scripts": {
     "test": "mocha --timeout 20000 --exit --use_strict --file ./test/before-test.js",
-    "dev": "nodemon ./registry.js dev docker",
+    "dev": "nodemon ./registry.js dev",
     "prod": "node ./registry.js prod",
     "start": "node registry.js",
     "inspect": "node --inspect registry.js",

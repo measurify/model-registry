@@ -36,6 +36,10 @@ router.use('/' + process.env.VERSION + '/users', passport.authenticate('jwt-toke
 const tagsRoute = require('./routes/tagRoute');
 router.use('/' + process.env.VERSION + '/tags', passport.authenticate('jwt-token', {session: false}), tagsRoute);
 
+// metadata
+const metadataRoute = require('./routes/metadataRoute');
+router.use('/' + process.env.VERSION + '/metadata', passport.authenticate('jwt-token', {session: false}), metadataRoute);
+
 // datasets
 const datasetsRoute = require('./routes/datasetRoute');
 router.use('/' + process.env.VERSION + '/datasets', passport.authenticate('jwt-token', {session: false}), datasetsRoute);

@@ -103,15 +103,21 @@ describe('/POST dataset', () => {
         const dataset = await factory.createDataset("test-dataset-1", user_1, [], [], [], VisibilityTypes.public, []);
         const datasets = [dataset._id];
         const tag = await factory.createTag("test-tag-1", user_1);
+        const tags_before = await before.Tag.find({});
         const users = [user_2._id];
         const metadata = [  { "name" : "name_1", "value": "value_1" } ];
-        const tags = [tag._id];
+        const metadata_before = await before.Metadata.find({});
+        const tags = [tag._id, "folk_tag"];
         const model = { "name": "dataset-name_test_1", "users": users, "metadata": metadata, "visibility": "public", "tags": tags, "datasets": datasets }
-        const res = await chai.request(server).keepOpen().post('/v1/models').set("Authorization", await factory.getUserToken(user_1)).send(dataset);
+        const res = await chai.request(server).keepOpen().post('/v1/models').set("Authorization", await factory.getUserToken(user_1)).send(model);
         res.should.have.status(200);
         res.body.should.be.a('object');
         res.body.should.have.property('_id');
         res.body.should.have.property('timestamp');
+        const tags_after = await before.Tag.find({});
+        tags_after.length.should.be.eql(tags_before.length + 1);
+        const metadata_after = await before.Metadata.find({});
+        metadata_after.length.should.be.eql(metadata_before.length + 1);
     });
 
     it('it should not POST a model with already existant name for the same user', async () => {
@@ -206,13 +212,16 @@ describe('/PUT dataset', () => {
         const owner = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
         const tag_1 = await factory.createTag("tag-test-1", owner);
         const tag_2 = await factory.createTag("tag-test-2", owner);
+        const tags_before = await before.Tag.find({});
         const model = await factory.createModel("test-model-1", owner, [], [], [], ModelStatusTypes.training, [], VisibilityTypes.private, [tag_1]);
-        const modification = { tags: { remove: [tag_1._id], add: [tag_2._id] } }
+        const modification = { tags: { remove: [tag_1._id], add: [tag_2._id, "folk_tag"] } }
         const res = await chai.request(server).keepOpen().put('/v1/models/' + model._id).set("Authorization", await factory.getUserToken(owner)).send(modification);
         res.should.have.status(200);
         res.body.should.be.a('object');
-        res.body.tags.length.should.be.eql(1);
+        res.body.tags.length.should.be.eql(2);
         String(res.body.tags[0]).should.eql(String(tag_2._id))
+        const tags_after = await before.Tag.find({});
+        tags_after.length.should.be.eql(tags_before.length + 1);
     });
 
     it('it should PUT a model to modify dataset list', async () => {      
@@ -232,13 +241,16 @@ describe('/PUT dataset', () => {
         const owner = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
         const metadata_1 = {name: 'name_1', value: 'value_1'};
         const metadata_2 = {name: 'name_2', value: 'value_2'};
+        const metadata_3 = {name: 'name_3', value: 'value_3'};
         const model = await factory.createModel("test-model-1", owner, [], [], [], ModelStatusTypes.training, [metadata_1], VisibilityTypes.private, []);
-        const modification = { metadata: { remove: [metadata_1], add: [metadata_2] } }
+        const modification = { metadata: { remove: [metadata_1], add: [metadata_2, metadata_3] } }
         const res = await chai.request(server).keepOpen().put('/v1/models/' + model._id).set("Authorization", await factory.getUserToken(owner)).send(modification);
         res.should.have.status(200);
         res.body.should.be.a('object');
-        res.body.metadata.length.should.be.eql(1);
-        res.body.metadata[0].should.eql(metadata_2)
+        res.body.metadata.length.should.be.eql(2);
+        res.body.metadata[0].should.eql(metadata_2);
+        const metadata_after = await before.Metadata.find({});
+        metadata_after.length.should.be.eql(3);
     });
 
     it('it should PUT a model to modify visibility', async () => {      
@@ -260,17 +272,6 @@ describe('/PUT dataset', () => {
         res.should.have.status(errors.restricted_access_modify.status);
         res.body.should.be.a('object');
         res.body.message.should.contain(errors.restricted_access_modify.message);
-    });
-
-    it('it should not PUT a model to modify tags list with a fake tag', async () => {      
-        const owner = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
-        const tag_1 = await factory.createTag("tag-test-1", owner);
-        const model = await factory.createModel("test-model-1", owner, [], [], [], ModelStatusTypes.training, [], VisibilityTypes.private, [tag_1]);
-        const modification = { tags: { remove: [tag_1._id], add: ["fake_tag"] } }
-        const res = await chai.request(server).keepOpen().put('/v1/models/' + model._id).set("Authorization", await factory.getUserToken(owner)).send(modification);
-        res.should.have.status(errors.put_request_error.status);
-        res.body.should.be.a('object');
-        res.body.message.should.contain(errors.put_request_error.message);
     });
 
     it('it should not PUT a model to modify users list with a fake user', async () => {      

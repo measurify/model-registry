@@ -1,8 +1,7 @@
 const mongoose = require('mongoose'); 
 const controller = require('./controller');
 const checker = require('./checker');
-const broker = require('../commons/broker');
-const errors = require('../commons/errors.js');
+const folksonomy = require('./folksonomy.js');
 
 exports.get = async (req, res) => { 
     const Model = mongoose.dbs[req.tenant.database].model('Model');
@@ -20,6 +19,8 @@ exports.getone = async (req, res) => {
 exports.post = async (req, res) => {
     const Model = mongoose.dbs[req.tenant.database].model('Model');
     let result = await checker.canCreate(req, res); if (result != true) return result;
+    result = await folksonomy.addTags(req, res); if (result != true) return result;
+    result = await folksonomy.addMetadata(req, res); if (result != true) return result;
     return await controller.postResource(req, res, Model);
 };
 
@@ -29,6 +30,8 @@ exports.put = async (req, res) => {
     let result = await checker.isAvailable(req, res, Model); if (result != true) return result;
     result = await checker.isFilled(req, res, fields); if (result != true) return result;
     result = await checker.canModify(req, res); if (result != true) return result;
+    result = await folksonomy.addTags(req, res); if (result != true) return result;
+    result = await folksonomy.addMetadata(req, res); if (result != true) return result;
     return await controller.updateResource(req, res, fields, Model);
 };   
 

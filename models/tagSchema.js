@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 const paginate = require('mongoose-paginate-v2');
 mongoose.Promise = global.Promise;
+const UsageTypes = require('../types/usageTypes.js'); 
 
 const tagSchema = new mongoose.Schema({
     _id: { type: String, required: "Please, supply an _id" },
+    usage: {type: String, enum: UsageTypes, default: UsageTypes.folk },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', autopopulate: true },
-    timestamp: { type: Date, default: Date.now, select: false },
+    timestamp: { type: Date, default: Date.now, select: false }
 });
 
 tagSchema.set('toJSON', { versionKey: false });

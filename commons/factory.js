@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 const UserRoles = require('../types/userRoles');
 const ModelStatusTypes = require('../types/modelStatusTypes.js'); 
 const VisibilityTypes = require('../types/visibilityTypes.js'); 
+const UsageTypes = require('../types/usageTypes.js'); 
 
 const { versions } = require('process');
 
@@ -78,20 +79,51 @@ exports.createUser = async function(username, password, role, tenant) {
     return await User.findById(user._id);
 };
 
-exports.createTag = async function(name, owner, tenant) {
+exports.createTag = async function(name, owner, usage, tenant) {
     const Tenant = mongoose.dbs['catalog'].model('Tenant');
     if(!tenant) tenant = await Tenant.findById(process.env.DEFAULT_TENANT);
     const Tag = mongoose.dbs[tenant.database].model('Tag');
     let tag = await Tag.findOne( { _id: name });
     if(!tag) {
-        const req = { _id: name , owner: owner}
+        const req = { _id: name, usage: usage, owner: owner}
         tag = new Tag(req);
         await tag.save();
     }
     return tag._doc;
 };
 
-exports.createMetadata = async function(name, value) {
+exports.createTags = async function(tags, owner, usage, tenant) {
+    const Tenant = mongoose.dbs['catalog'].model('Tenant');
+    if(!tenant) tenant = await Tenant.findById(process.env.DEFAULT_TENANT);
+    if(!tags) return;
+    if(Array.isArray(tags)) for(tag of tags) { this.createTag(tag, owner, usage, tenant) }
+    else { this.createTag(tags, owner, usage, tenant) }
+    return;
+};
+
+exports.createMetadata = async function(name, owner, usage, tenant) {
+    const Tenant = mongoose.dbs['catalog'].model('Tenant');
+    if(!tenant) tenant = await Tenant.findById(process.env.DEFAULT_TENANT);
+    const Metadata = mongoose.dbs[tenant.database].model('Metadata');
+    let metadata = await Metadata.findOne( { _id: name });
+    if(!metadata) {
+        const req = { _id: name, usage: usage, owner: owner}
+        metadata = new Metadata(req);
+        await metadata.save();
+    }
+    return metadata._doc;
+};
+
+exports.createMetadatas = async function(metadatas, owner, usage, tenant) {
+    const Tenant = mongoose.dbs['catalog'].model('Tenant');
+    if(!tenant) tenant = await Tenant.findById(process.env.DEFAULT_TENANT);
+    if(!metadatas) return;
+    if(Array.isArray(metadatas)) for(data of metadatas) { this.createMetadata(data.name, owner, usage, tenant) }
+    else { this.createMetadata(metadatas.name, owner, usage, tenant) }
+    return;
+};
+
+exports.valorizeMetadata = async function(name, value) {
     return { name: name, value: value};
 };
 
@@ -116,6 +148,8 @@ exports.createModel = async function(name, owner, users, datasets, versions, sta
     }
     const model = new Model(req);
     await model.save();
+    this.createTags(tags, owner, UsageTypes.folk, tenant);
+    this.createMetadatas(metadata, owner, UsageTypes.folk, tenant);
     return model._doc;
 };
 
@@ -134,6 +168,8 @@ exports.createDataset = async function(name, owner, users, versions, metadata, v
     }
     const dataset = new Dataset(req);
     await dataset.save();
+    this.createTags(tags, owner, UsageTypes.folk, tenant);
+    this.createMetadatas(metadata, owner, UsageTypes.folk, tenant);
     return dataset._doc;
 };
 
@@ -149,25 +185,30 @@ exports.createDemoContent = async function(tenant) {
     users.push(await this.createUser('user-5', 'password', UserRoles.regular, tenant));
 
     const tags = [];
-    tags.push(await this.createTag('tag_1', users[0], tenant));
-    tags.push(await this.createTag('tag_2', users[1], tenant));
-    tags.push(await this.createTag('tag_3', users[2], tenant));
+    tags.push(await this.createTag('tag_1', users[0], UsageTypes.default, tenant));
+    tags.push(await this.createTag('tag_2', users[1], UsageTypes.default, tenant));
+    tags.push(await this.createTag('tag_3', users[2], UsageTypes.default, tenant));
+
+    const metadatas = [];
+    metadatas.push(await this.createMetadata('name_1', users[0], UsageTypes.default, tenant));
+    metadatas.push(await this.createMetadata('name_2', users[1], UsageTypes.default, tenant));
+    metadatas.push(await this.createMetadata('name_3', users[2], UsageTypes.default, tenant));
 
     const metadata_1 = [];
-    metadata_1.push(await this.createMetadata('name_1', 'value_1'));
-    metadata_1.push(await this.createMetadata('name_2', 'value_2'));
-    metadata_1.push(await this.createMetadata('name_3', 'value_3'));
+    metadata_1.push(await this.valorizeMetadata('name_1', 'value_1'));
+    metadata_1.push(await this.valorizeMetadata('name_2', 'value_2'));
+    metadata_1.push(await this.valorizeMetadata('name_3', 'value_3'));
 
     const metadata_2 = [];
-    metadata_2.push(await this.createMetadata('name_1', 'value_4'));
-    metadata_2.push(await this.createMetadata('name_2', 'value_5'));
-    metadata_2.push(await this.createMetadata('name_3', 'value_6'));
+    metadata_2.push(await this.valorizeMetadata('name_1', 'value_4'));
+    metadata_2.push(await this.valorizeMetadata('name_2_folk', 'value_5'));
+    metadata_2.push(await this.valorizeMetadata('name_3', 'value_6'));
 
     const metadata_3 = [];
-    metadata_3.push(await this.createMetadata('name_1', 'value_4'));
-    metadata_3.push(await this.createMetadata('name_2', 'value_5'));
-    metadata_3.push(await this.createMetadata('name_3', 'value_6'));
-    metadata_3.push(await this.createMetadata('name_4', 'value_7'));
+    metadata_3.push(await this.valorizeMetadata('name_1', 'value_4'));
+    metadata_3.push(await this.valorizeMetadata('name_2', 'value_5'));
+    metadata_3.push(await this.valorizeMetadata('name_3', 'value_6'));
+    metadata_3.push(await this.valorizeMetadata('name_4_folk', 'value_7'));
 
     const versions_dataset_1 = [];
     versions_dataset_1.push(await this.createVersion('1000', 'file_dataset_1_1.csv'));
@@ -179,8 +220,8 @@ exports.createDemoContent = async function(tenant) {
     versions_dataset_2.push(await this.createVersion('1004', 'file_dataset_2_3.csv'));
 
     const datasets = [];
-    datasets.push(await this.createDataset('dataset_1', users[0], [users[1], users[2]], versions_dataset_1, metadata_1, VisibilityTypes.public, tags[2], tenant));
-    datasets.push(await this.createDataset('dataset_2', users[1], [users[2], users[3]], versions_dataset_2, metadata_2, VisibilityTypes.private, tags[1], tenant));    
+    datasets.push(await this.createDataset('dataset_1', users[0], [users[1], users[2]], versions_dataset_1, metadata_1, VisibilityTypes.public, [tags[2], "Folk_tag_1"], tenant));
+    datasets.push(await this.createDataset('dataset_2', users[1], [users[2], users[3]], versions_dataset_2, metadata_2, VisibilityTypes.private, [tags[1], "Folk_tag_2"], tenant));    
 
     const versions_model_1 = [];
     versions_model_1.push(await this.createVersion('1005', 'file_model_1_1.csv'));
@@ -190,6 +231,6 @@ exports.createDemoContent = async function(tenant) {
     versions_model_2.push(await this.createVersion('1006', 'file_model_2_2.csv'));
 
     const models = [];
-    models.push(await this.createModel('model_1', users[0], [users[1], users[2]], [datasets[0]], versions_model_1, ModelStatusTypes.training, metadata_1, VisibilityTypes.public, tags[2], tenant));
-    models.push(await this.createModel('model_2', users[1], [users[2], users[3]], [datasets[1]], versions_model_2, ModelStatusTypes.test, metadata_2, VisibilityTypes.private, tags[1], tenant));    
+    models.push(await this.createModel('model_1', users[0], [users[1], users[2]], [datasets[0]], versions_model_1, ModelStatusTypes.training, metadata_1, VisibilityTypes.public, [tags[2], "Folk_tag_1"], tenant));
+    models.push(await this.createModel('model_2', users[1], [users[2], users[3]], [datasets[1]], versions_model_2, ModelStatusTypes.test, metadata_2, VisibilityTypes.private, [tags[1], , "Folk_tag_3"], tenant));    
 }

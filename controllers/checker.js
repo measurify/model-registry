@@ -69,7 +69,7 @@ exports.isNotUsed = async function(req, res, model, field) {
 } 
 
 exports.isAdminitrator = async function(req, res) {
-    if(!authorizator.isAdministrator(req.user)) return errors.manage(res, errors.restricted_access_read);
+    if(!authorizator.isAdministrator(req.user)) return errors.manage(res, errors.only_administrator);
     return true;
 }
 

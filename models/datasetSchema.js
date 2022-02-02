@@ -1,20 +1,23 @@
 const mongoose = require('mongoose');
 const paginate = require('mongoose-paginate-v2');
 mongoose.Promise = global.Promise; 
-
-const metadataSchema = require('./metadataSchema.js');
 const fileSchema = require('./fileSchema.js');
-const ModelStatusTypes = require('../types/modelStatusTypes.js'); 
 const VisibilityTypes = require('../types/visibilityTypes.js'); 
+
+const metadataValueSchema = new mongoose.Schema({ 
+    name: { type: String, required: "Please, supply a name" },
+    value: { type: String, required: "Please, supply a value" }, },
+    { _id: false }  
+);
 
 const datasetSchema = new mongoose.Schema({
     name: { type: String, required: "Please, supply a valid name" },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     users: [ { type: mongoose.Schema.Types.ObjectId, ref:'User', autopopulate: true } ],
     versions: [ fileSchema ],
-    metadata: [ metadataSchema ],
+    metadata: [metadataValueSchema],
     visibility: {type: String, enum: VisibilityTypes, default: VisibilityTypes.private },
-    tags: { type: [String], ref: 'Tag' },
+    tags: { type: [String] },
     timestamp: { type: Date, default: Date.now }
 });
 
@@ -22,18 +25,6 @@ datasetSchema.set('toJSON', { versionKey: false });
 datasetSchema.index({ owner: 1 });
 datasetSchema.plugin(paginate);
 datasetSchema.plugin(require('mongoose-autopopulate'));
-
-// validate tags
-datasetSchema.path('tags').validate({
-    validator: async function (values) {
-        const Tag = this.constructor.model('Tag');
-        for (let value of values) {
-            const tag = await Tag.findById(value);
-            if (!tag) throw new Error('Tag not existent (' + value + ')');
-        };
-        return true;
-    }
-});
 
 // validate users
 datasetSchema.path('users').validate({

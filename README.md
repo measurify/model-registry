@@ -47,7 +47,7 @@ The Model Registry introduces a few concepts that describe and facilitate the fu
 - **Dataset**: a dataset used to train models
 - **Version**: each registered model\dataset can have many versions, which is a specific file (e.g. a .onxx file for a model, a .zip file for a dataset)
 - **Metadata**: a list of name-value pairs that can be used to annotate models and datasets, including training condition, algorithm descriptions, hyperparameters employed and any relevant information useful for the user to apply the model or use the dataset
-- **Tag**: a label that can be used to categorize models/datasets
+- **Tag**: a label that can be used to categorize models/datasets 
 
 ## Workflow
 
@@ -98,24 +98,6 @@ After the call, we get a token to be used for all other requests. We can use it 
 
     Authorization: {{token}}
 
-### Tags
-
-To create a new tag:
-
-    POST {{url}}/v1/tags
-
-    { 
-        "_id": "test_tag"
-    }
-
-It is possible to get the list of all available tags:
-
-    GET {{url}}/v1/tags
-
-And also to delete a specific tag (only if it is not used):
-
-    DELETE {{url}}/v1/tags/{{tag}}
-
 ### Dataset
 
 Adding a dataset to the registry:
@@ -135,11 +117,14 @@ Adding a dataset to the registry:
         ],
         "visibility": "public",
         "tags": [
-            "tag_1"
+            "tag_1", 
+            "tag_2"
         ]
     }
 
 In creating a new dataset, we have to provide information about the **name** of the dataset, the **visibility** of the dataset (*public* or *private*), the list of **users** who can access the private dataset, the list of **metadata** name-value pairs to describe the dataset, and the list of **tags** to categorize the dataset.
+
+Tags and metadata names are stored by the registry in order to build a folksonomy from the data inserted by users.
 
 After the creation, we receive from the registry a JSON object describing the dataset with a unique **id** that we can use to identify the dataset in subsequent calls.
 
@@ -158,7 +143,7 @@ We can modify the list of **users**, the list of **metadata**, the list of **tag
         },
         "tags": {
             "remove": ["tag_1"],
-            "add": ["tag_2"]
+            "add": ["tag_3"]
         },
         "metadata": {
             "remove": [
@@ -211,6 +196,8 @@ Adding a model to the registry:
     }
 
 In creating a new model, we have to provide information about the **name** of the model, the current **status** of maturity of the model (*training*, *test*, *production*), the list of **datasets** used to train or test the model, the **visibility** of the model (*public* or *private*), the list of **users** who can access the primvate model, the list of **metadata** name-value pairs to describe the model, and the list of **tags** to categorize the model.
+
+Tags and metadata names are stored by the registry in order to build a folksonomy from the data inserted by users.
 
 After the creation, we receive from the registry a JSON object describing the model with a unique **id** that we can use to identify the model in subsequent calls.
 
@@ -280,6 +267,58 @@ Delete a version
     DELETE {{url}}/v1/models/{{model}}/versions/{{original}}
     DELETE {{url}}/v1/datasets/{{dataset}}/versions/{{original}}
 
+### Tags
+
+The administrator can create a set of default tags that the UI can suggest to the user during model/dataset creation.
+
+    POST {{url}}/v1/tags
+
+    { 
+        "_id": "test_tag"
+    }
+
+It is possible to get the list of all available default tags:
+
+    GET {{url}}/v1/tags?filter={"usage":"default"}
+
+It is possible to get the list of folk tags:
+
+    GET {{url}}/v1/tags?filter={"usage":"folk"}
+
+It is possible to select tags with a regex expression in order to allow UI auto-completion features:
+
+    GET {{url}}/v1/tags?filter={"_id":{"$regex": "Fol"}}
+
+And also to delete a specific tag (only the administrator):
+
+    DELETE {{url}}/v1/tags/{{tag}}
+
+### Metadata
+
+The administrator can create a set of default metadata names that the UI can suggest to the user during model/dataset creation.
+
+    POST {{url}}/v1/metadata
+
+    { 
+        "_id": "test_metadata"
+    }
+
+It is possible to get the list of all available default metadata:
+
+    GET {{url}}/v1/metadata?filter={"usage":"default"}
+
+It is possible to get the list of folk metadata:
+
+    GET {{url}}/v1/metadata?filter={"usage":"folk"}
+
+It is possible to select metadata with a regex expression in order to allow UI auto-completion features:
+
+    GET {{url}}/v1/metadata?filter={"_id":{"$regex": "Fol"}}
+
+And also to delete a specific metadata name (only the administrator):
+
+    DELETE {{url}}/v1/metadata/{{metadata}}
+
 ### Error
 
 In case of a request with errors, the registry response is filled with a specific **error id**. The list of all possible errors can be accessed as:
@@ -341,7 +380,7 @@ Use Certbot (modify in order to provide your domain)
     sudo ufw allow 80
     sudo certbot certonly --standalone --preferred-challenges http -d {{url}}
 
-Copy certificates
+Copy certificates 
 
     sudo cp /etc/letsencrypt/live/{{url}}/fullchain.pem ~/registry/resources/fullchain.pem
     sudo cp /etc/letsencrypt/live/{{url}}/privkey.pem ~/registry/resources/key.pem

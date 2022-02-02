@@ -239,6 +239,7 @@
 									"if(data.tags) pm.environment.set('tags', JSON.stringify(data.tags));",
 									"if(data.models) pm.environment.set('models', JSON.stringify(data.models));",
 									"if(data.datasets) pm.environment.set('datasets', JSON.stringify(data.datasets));",
+									"if(data.names) pm.environment.set('names', JSON.stringify(data.names));",
 									""
 								],
 								"type": "text/javascript"
@@ -1149,252 +1150,6 @@
 			]
 		},
 		{
-			"name": "TAGS",
-			"item": [
-				{
-					"name": "LOGIN as admin",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
-						},
-						"url": {
-							"raw": "{{url}}/v1/login",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"v1",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET all tags",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{token}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{url}}/v1/tags",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"v1",
-								"tags"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "POST a new tag",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.environment.set(\"tag\", JSON.parse(responseBody)._id);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "{{token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{ \n\t\"_id\": \"test_tag\"\n}"
-						},
-						"url": {
-							"raw": "{{url}}/v1/tags",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"v1",
-								"tags"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET a tag",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{token}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{url}}/v1/tags/{{tag}}",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"v1",
-								"tags",
-								"{{tag}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "POST a list of new tags",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "{{token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "[\r\n  { \"_id\": \"tagged-tag-1\" },\r\n  { \"_id\": \"tagged-tag-2\" },\r\n  { \"_id\": \"tagged-tag-3\" },\r\n  { \"_id\": \"tagged-tag-4\" }\r\n]"
-						},
-						"url": {
-							"raw": "{{url}}/v1/tags",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"v1",
-								"tags"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE a tag (not used)",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{url}}/v1/tags/{{tag}}",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"v1",
-								"tags",
-								"{{tag}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "DATASET",
 			"item": [
 				{
@@ -1509,7 +1264,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \n    \"name\": \"MyDataset\",\n    \"users\": [\n        \"{{user_1}}\",\n        \"{{user_2}}\"\n    ],\n    \"metadata\": [\n        { \"name\" : \"meta_1\", \"value\": \"value_1\" },\n        { \"name\" : \"meta_2\", \"value\": \"value_2\" },\n        { \"name\" : \"meta_3\", \"value\": \"value_3\" }\n    ],\n    \"visibility\": \"public\",\n    \"tags\": [\n        \"{{tag_1}}\"\n    ]\n}"
+							"raw": "{ \n    \"name\": \"MyDataset\",\n    \"users\": [\n        \"{{user_1}}\",\n        \"{{user_2}}\"\n    ],\n    \"metadata\": [\n        { \"name\" : \"meta_dataset_1\", \"value\": \"value_1\" },\n        { \"name\" : \"meta_dataset_2\", \"value\": \"value_2\" },\n        { \"name\" : \"meta_dataset_3\", \"value\": \"value_3\" }\n    ],\n    \"visibility\": \"public\",\n    \"tags\": [\n        \"tag_dataset_1\"\n    ]\n}"
 						},
 						"url": {
 							"raw": "{{url}}/v1/datasets",
@@ -1584,7 +1339,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \n    \"users\": {\n        \"remove\": [\"{{user_1}}\", \"{{user_2}}\"],\n        \"add\": [\"{{user_3}}\"]\n    },\n    \"tags\": {\n        \"remove\": [\"{{tag_1}}\"],\n        \"add\": [\"{{tag_2}}\"]\n    },\n    \"metadata\": {\n        \"remove\": [\n            { \"name\" : \"meta_1\", \"value\": \"value_1\" },\n            { \"name\" : \"meta_2\", \"value\": \"value_3\" }\n        ],\n        \"add\": [\n            { \"name\" : \"meta_3\", \"value\": \"value_7\" },\n            { \"name\" : \"meta_4\", \"value\": \"value_8\" }\n        ]\n    },\n    \"visibility\": \"private\"\n}",
+							"raw": "{ \n    \"users\": {\n        \"remove\": [\"{{user_1}}\", \"{{user_2}}\"],\n        \"add\": [\"{{user_3}}\"]\n    },\n    \"tags\": {\n        \"remove\": [\"tag_dataset_1\"],\n        \"add\": [\"tag_dataset_4\"]\n    },\n    \"metadata\": {\n        \"remove\": [\n            { \"name\" : \"meta_dataset_1\" },\n            { \"name\" : \"meta_dataset_2\"}\n        ],\n        \"add\": [\n            { \"name\" : \"meta_dataset_4\", \"value\": \"value_7\" },\n            { \"name\" : \"meta_dataset_5\", \"value\": \"value_8\" }\n        ]\n    },\n    \"visibility\": \"private\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1720,6 +1475,39 @@
 					"response": []
 				},
 				{
+					"name": "GET filtered models",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/models?filter={\"tags\":\"tag_2\"}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"models"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "{\"tags\":\"tag_2\"}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST a new model",
 					"event": [
 						{
@@ -1766,7 +1554,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \n    \"name\": \"MyModel2\",\n    \"users\": [\n        \"{{user_1}}\",\n        \"{{user_2}}\"\n    ],\n    \"datasets\": [\n        \"{{dataset_1}}\"\n    ], \n    \"status\": \"training\",\n    \"metadata\": [\n        { \"name\" : \"meta_1\", \"value\": \"value_1\" },\n        { \"name\" : \"meta_2\", \"value\": \"value_2\" },\n        { \"name\" : \"meta_3\", \"value\": \"value_3\" }\n    ],\n    \"visibility\": \"public\",\n    \"tags\": [\n        \"{{tag_1}}\"\n    ]\n}"
+							"raw": "{ \n    \"name\": \"MyModel2\",\n    \"users\": [\n        \"{{user_1}}\",\n        \"{{user_2}}\"\n    ],\n    \"datasets\": [\n        \"{{dataset_1}}\"\n    ], \n    \"status\": \"training\",\n    \"metadata\": [\n        { \"name\" : \"meta_model_1\", \"value\": \"value_1\" },\n        { \"name\" : \"meta_model_2\", \"value\": \"value_2\" },\n        { \"name\" : \"meta_model_3\", \"value\": \"value_3\" }\n    ],\n    \"visibility\": \"public\",\n    \"tags\": [\n        \"tag_model_1\"\n    ]\n}"
 						},
 						"url": {
 							"raw": "{{url}}/v1/models",
@@ -1841,7 +1629,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \n    \"users\": {\n        \"remove\": [\"{{user_1}}\", \"{{user_2}}\"],\n        \"add\": [\"{{user_3}}\"]\n    },\n    \"datasets\": {\n        \"remove\": [\"{{dataset_1}}\"],\n        \"add\": [\"{{dataset_2}}\"]\n    },\n    \"tags\": {\n        \"remove\": [\"{{tag_1}}\"],\n        \"add\": [\"{{tag_2}}\"]\n    },\n    \"status\": \"deploy\",\n    \"metadata\": {\n        \"remove\": [\n            { \"name\" : \"meta_1\", \"value\": \"value_1\" },\n            { \"name\" : \"meta_2\", \"value\": \"value_3\" }\n        ],\n        \"add\": [\n            { \"name\" : \"meta_3\", \"value\": \"value_7\" },\n            { \"name\" : \"meta_4\", \"value\": \"value_8\" }\n        ]\n    },\n    \"visibility\": \"private\"\n}",
+							"raw": "{ \n    \"users\": {\n        \"remove\": [\"{{user_1}}\", \"{{user_2}}\"],\n        \"add\": [\"{{user_3}}\"]\n    },\n    \"datasets\": {\n        \"remove\": [\"{{dataset_1}}\"],\n        \"add\": [\"{{dataset_2}}\"]\n    },\n    \"tags\": {\n        \"remove\": [\"tag_model_1\"],\n        \"add\": [\"tag_model_2\"]\n    },\n    \"status\": \"deploy\",\n    \"metadata\": {\n        \"remove\": [\n            { \"name\" : \"meta_model_1\" },\n            { \"name\" : \"meta_model_2\" }\n        ],\n        \"add\": [\n            { \"name\" : \"meta_model_4\", \"value\": \"value_7\" },\n            { \"name\" : \"meta_model_5\", \"value\": \"value_8\" }\n        ]\n    },\n    \"visibility\": \"private\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2299,6 +2087,251 @@
 			]
 		},
 		{
+			"name": "FOLKSONOMY",
+			"item": [
+				{
+					"name": "LOGIN as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all  default tags",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/tags?filter={\"usage\":\"default\"}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tags"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "{\"usage\":\"default\"}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET a filtered list of tags",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/tags?filter={\"_id\":{\"$regex\": \"Fol\"}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tags"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "{\"_id\":{\"$regex\": \"Fol\"}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all  folk tags",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/tags?filter={\"usage\":\"folk\"}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tags"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "{\"usage\":\"folk\"}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all  default metadata names",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/metadata?filter={\"usage\":\"default\"}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"metadata"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "{\"usage\":\"default\"}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all  folk metadata names",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/metadata?filter={\"usage\":\"folk\"}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"metadata"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "{\"usage\":\"folk\"}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET a filtered list of metadata",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/metadata?filter={\"_id\":{\"$regex\": \"fol\"}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"metadata"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "{\"_id\":{\"$regex\": \"fol\"}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "LOGS",
 			"item": [
 				{
@@ -2335,6 +2368,284 @@
 							"path": [
 								"v1",
 								"log"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TAGS",
+			"item": [
+				{
+					"name": "LOGIN as admin Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a new tag",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"tag\", JSON.parse(responseBody)._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"_id\": \"my-tag\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/tags",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tags"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a tag",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/tags/{{tag}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"tags",
+								"{{tag}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "METADATA",
+			"item": [
+				{
+					"name": "LOGIN as admin Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", JSON.parse(responseBody).token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" : \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a new metadata",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"metadata\", JSON.parse(responseBody)._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"_id\": \"my-metadata\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/v1/metadata",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"metadata"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a metadata",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/v1/metadata/{{metadata}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"metadata",
+								"{{metadata}}"
 							]
 						}
 					},

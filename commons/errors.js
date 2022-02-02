@@ -13,6 +13,7 @@ exports.restricted_access_read               = { status: 403, value: 10, message
 exports.restricted_access_create             = { status: 403, value: 11, message: 'You cannot create a new resource' };
 exports.restricted_access_modify             = { status: 403, value: 12, message: 'You cannot modify this resource' };
 exports.restricted_access_delete             = { status: 403, value: 13, message: 'You cannot delete this resource' };
+exports.only_administrator                   = { status: 403, value: 13, message: 'Only administrators can do this operation' };
 exports.incorrect_info                       = { status: 401, value: 14, message: 'Please, the body information is missing valid fields'}; 
 
 exports.manage = function(res, error, more) {
