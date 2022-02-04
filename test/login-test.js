@@ -46,3 +46,39 @@ describe('/POST login', () => {
         res.body.details.should.contain('Incorrect username or password');
     });
 });
+
+// Test the /PUT route
+describe('/PUT login', () => {
+    it('it should PUT a login with a correct token', async () => {
+        const user = await factory.createUser("test-username-1", "test-password-1");
+        const request = {};
+        const res = await chai.request(server).keepOpen().put('/v1/login').set("Authorization", await factory.getUserToken(user)).send(request);
+        res.should.have.status(200);
+        res.body.should.be.a('object');
+        res.body.should.have.property('token');
+    });
+
+    it('it should not PUT a login with a fake token', async () => {
+        const user = await factory.createUser("test-username-1", "test-password-1");
+        const request = {};
+        const res = await chai.request(server).keepOpen().put('/v1/login').set("Authorization", "fake-token").send(request);
+        res.should.have.status(errors.authentication_error.status);
+        res.body.should.be.a('object');
+        res.body.message.should.be.a('string');
+        res.body.message.should.contain(errors.authentication_error.message);
+        res.body.details.should.contain('Login error');
+    });
+
+    it('it should not PUT a too old token', async () => {
+        const temp = process.env.JWT_RENEW_EXPIRATIONTIME;
+        process.env.JWT_RENEW_EXPIRATIONTIME = 0.01;
+        const user = await factory.createUser("test-username-1", "test-password-1");
+        const request = {};
+        const res = await chai.request(server).keepOpen().put('/v1/login').set("Authorization", await factory.getUserToken(user)).send(request);
+        res.body.should.be.a('object');
+        res.body.message.should.be.a('string');
+        res.body.message.should.contain(errors.authentication_error.message);
+        res.body.details.should.contain('maxAge exceeded');
+        process.env.JWT_RENEW_EXPIRATIONTIME = temp;
+    });
+});

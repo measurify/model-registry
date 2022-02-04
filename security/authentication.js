@@ -45,6 +45,25 @@ passport.use('api-token', new custom_strategy(
     }
 ));
 
+passport.use('jwt-renew', new custom_strategy(
+    async function(req, done) {
+        let token = req.body.Authorization || req.get('Authorization') || req.query.Authorization;
+        if (!token) return done(null, false, "Missing token"); 
+        try { 
+            token = token.replace('JWT ', '');
+            const info = jwt.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true, maxAge: process.env.JWT_RENEW_EXPIRATIONTIME });
+            const User = mongoose.dbs[info.tenant.database].model('User');
+            const user = await User.findById(info.user._id);
+            if (!user) return done(null, false, "Missing user");
+            req.tenant = info.tenant;
+            return done(null, user, 'Logged Successfully');  
+        }
+        catch(error) {
+            return done(null, false, 'Login error (' + error + ')'); 
+        }
+    }
+));
+
 passport.use('jwt-token', new custom_strategy(
     async function(req, done) {
         let token = req.body.Authorization || req.get('Authorization') || req.query.Authorization;

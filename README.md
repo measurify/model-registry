@@ -94,8 +94,13 @@ Model Registry can be accessed with a token than can be obtained with the follow
 
 If **tenant** is not specified, the default one is used.
 
-After the call, we get a token to be used for all other requests. We can use it as a header parameter:
+After the call, we get a token valid for JWT_EXPIRATIONTIME to be used for all other requests. We can use it as a header parameter:
 
+    Authorization: {{token}}
+
+It is possible to renew a expired token using the following route, but before the JWT_RENEW_EXPIRATIONTIME:
+
+    PUT {{url}}/v1/login
     Authorization: {{token}}
 
 ### Dataset
@@ -350,7 +355,8 @@ There is a configuration file **\init\variable.env** which can be edited in orde
     HTTPSSECRET=atmospherePass
     API_TOKEN=ifhidhfudshuf8
     JWT_SECRET=fdshudshfidsuh
-    JWT_EXPIRATIONTIME=300000m
+    JWT_EXPIRATIONTIME=30
+    JWT_RENEW_EXPIRATIONTIME=50m
     DATABASE=mongodb://localhost:27017/registry-catalog
     LOG=true
     UPLOAD_PATH=./uploads

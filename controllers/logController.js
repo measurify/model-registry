@@ -10,4 +10,3 @@ exports.get = async (req, res) => {
     return await controller.getResourceList(req, res, '{ "date": "desc" }', null, Log); 
 };
 
-

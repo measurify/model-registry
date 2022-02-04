@@ -7,5 +7,6 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
 router.post('/',  catchErrors(loginController.post));
+router.put('/', catchErrors(loginController.put));
 
 module.exports = router;
