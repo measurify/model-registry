@@ -1,6 +1,6 @@
 # Model Registry Server
 
-The Model Registry is a repository used to store trained machine learning models and datasets. In addition to the models\datasets, the registry stores information (metadata) about the training jobs used to create the model, hyperparameter values and performance metrics. These values allow for simple comparison of models\datasets. Each model\dataset stored in the registry is assigned a unique identifier and a list of versions.
+The Model Registry is a repository for trained machine learning models (checkpoints) and datasets. For every item (model\dataset), the registry stores information (metadata) about the training job used to create the model, hyperparameter values and performance metrics. These values allow for simple comparison of models\datasets. Each model\dataset stored in the registry is assigned a unique identifier and a list of versions.
 
 The Model Registry is developed using [Node JS](https://nodejs.org/en/) and [MongoDB](https://www.mongodb.com/).
 
