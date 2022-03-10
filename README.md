@@ -260,7 +260,7 @@ It is possible to add a version (file) to a model or to a dataset:
 
 the body should be a form-data with the **file** of type "file" with the file to upload as a version of the model\dataset
 
-Download a version of a model\dataser:
+Download a version of a model\dataset:
 
     GET {{url}}/v1/models/{{model}}/versions/{{original}}
     GET {{url}}/v1/datasets/{{dataset}}/versions/{{original}}
