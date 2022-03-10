@@ -1,6 +1,6 @@
 # Model Registry Server
 
-The Model Registry is a repository used to store trained machine learning models and datasets. In addition to the models\datasets, the registry stores information (metadata) about the training jobs used to create the model, hyperparameter values and performance metrics. These values allows for simple comparison of models\datasets. Each model\dataset stored in the registry is assigned a unique identifier and a list of multiple versions.
+The Model Registry is a repository used to store trained machine learning models and datasets. In addition to the models\datasets, the registry stores information (metadata) about the training jobs used to create the model, hyperparameter values and performance metrics. These values allow for simple comparison of models\datasets. Each model\dataset stored in the registry is assigned a unique identifier and a list of versions.
 
 The Model Registry is developed using [Node JS](https://nodejs.org/en/) and [MongoDB](https://www.mongodb.com/).
 
@@ -98,7 +98,7 @@ After the call, we get a token valid for JWT_EXPIRATIONTIME to be used for all o
 
     Authorization: {{token}}
 
-It is possible to renew a expired token using the following route, but before the JWT_RENEW_EXPIRATIONTIME:
+It is possible to renew an expired token using the following route, but before the JWT_RENEW_EXPIRATIONTIME:
 
     PUT {{url}}/v1/login
     Authorization: {{token}}
@@ -129,15 +129,15 @@ Adding a dataset to the registry:
 
 In creating a new dataset, we have to provide information about the **name** of the dataset, the **visibility** of the dataset (*public* or *private*), the list of **users** who can access the private dataset, the list of **metadata** name-value pairs to describe the dataset, and the list of **tags** to categorize the dataset.
 
-Tags and metadata names are stored by the registry in order to build a folksonomy from the data inserted by users.
+Tags and metadata names are stored in the registry, in order to build a folksonomy from the data inserted by users.
 
-After the creation, we receive from the registry a JSON object describing the dataset with a unique **id** that we can use to identify the dataset in subsequent calls.
+After the creation, the user receives from the registry a JSON object describing the dataset with a unique **id** that can be used to identify the dataset in subsequent calls.
 
-After we have registered a dataset, we can fetch it using its **id**. We can access only public, owned or shared dataset.
+After registering a dataset, a user can fetch it using its **id**. A user can access only public, owned or shared dataset.
 
     GET {{url}}/v1/datasets/{{id}}
 
-We can modify the list of **users**, the list of **metadata**, the list of **tags**, and the **visibility**, of a dataset:
+A user can modify the list of **users**, the list of **metadata**, the list of **tags**, and the **visibility**, of a dataset:
 
     PUT {{url}}/v1/datasets/{{dataset}}
 
@@ -169,7 +169,7 @@ It is possible to search among datasets (public, owned or shared) using a filter
 
 as an example, the previous call gets all (public, owned or shared) datasets tagged with with "tag_2" label.
 
-Deleting a datasets:
+Deleting a dataset:
 
     DELETE {{url}}/v1/datasets/{{dataset}}
 
@@ -320,7 +320,7 @@ It is possible to select metadata with a regex expression in order to allow UI a
 
     GET {{url}}/v1/metadata?filter={"_id":{"$regex": "Fol"}}
 
-And also to delete a specific metadata name (only the administrator):
+It is also possible to delete a specific metadata name (only the administrator):
 
     DELETE {{url}}/v1/metadata/{{metadata}}
 
@@ -346,7 +346,7 @@ The Model Registry is developed using [Node JS](https://nodejs.org/en/) and [Mon
 [Install Docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
 [Install Docker Compose](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-16-04)
 
-There is a configuration file **\init\variable.env** which can be edited in order to specify several features:
+There is a configuration file **\init\variable.env**, which can be edited in order to specify several features:
 
     VERSION=v1
     PROTOCOL=https
@@ -366,11 +366,11 @@ There is a configuration file **\init\variable.env** which can be edited in orde
     DEFAULT_TENANT_ADMIN_TEMPORARY_PASSWORD=admin 
     DEFAULT_TENANT_PASSWORDHASH=true 
 
-In particular, the connection string with the database and administrator credential (at startup the registry will create a admin user with these credential), the expiration time of tokens, the log level, the secret word for the HTTPS certificate file, the secret word for the JWT token.
+In particular, the connection string with the database and administrator credential (at startup, the registry will create a admin user with these credential), the expiration time of tokens, the log level, the secret word for the HTTPS certificate file, the secret word for the JWT token.
 
 Then you can follow the Quick Start instruction to get the Registry.
 
-The Registry can support both HTTP and HTTPS. Without certificate, the registry starts using a self-signed certificate (stored in the resources forlder) or in HTTP (if also the self-signed certificate is missing). It is reccomended to get a valid certificate from a authority. In the following, we provide instruction to add a certificate from [Let's Encript](https://letsencrypt.org/), a free, automated and open Certificate Authority. Detailed instruction can be found at [Certbot instruction](https://certbot.eff.org/instructions)
+The Registry can support both HTTP and HTTPS. Without certificate, the registry starts using a self-signed certificate (stored in the resources forlder) or in HTTP (if also the self-signed certificate is missing). It is reccomended to get a valid certificate from a authority. In the following, we provide instruction to add a certificate from [Let's Encrypt](https://letsencrypt.org/), a free, automated and open Certificate Authority. Detailed instruction can be found at [Certbot instruction](https://certbot.eff.org/instructions)
 
 Install Certbot
 
