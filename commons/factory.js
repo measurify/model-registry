@@ -232,5 +232,5 @@ exports.createDemoContent = async function(tenant) {
 
     const models = [];
     models.push(await this.createModel('model_1', users[0], [users[1], users[2]], [datasets[0]], versions_model_1, ModelStatusTypes.training, metadata_1, VisibilityTypes.public, [tags[2], "Folk_tag_1"], tenant));
-    models.push(await this.createModel('model_2', users[1], [users[2], users[3]], [datasets[1]], versions_model_2, ModelStatusTypes.test, metadata_2, VisibilityTypes.private, [tags[1], , "Folk_tag_3"], tenant));    
+    models.push(await this.createModel('model_2', users[1], [users[2], users[3]], [datasets[1]], versions_model_2, ModelStatusTypes.test, metadata_2, VisibilityTypes.private, [tags[1], "Folk_tag_3"], tenant));    
 }
