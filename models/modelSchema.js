@@ -64,6 +64,20 @@ modelSchema.path('owner').validate({
     }
 });
 
+// validate versions
+modelSchema.path('versions').validate({
+    validator: async function (values) {  
+        let ordinalValues=[]; 
+        for(let i=0; i<values.length; i++) {
+            if(ordinalValues.includes(values[i].ordinal.toLowerCase())){
+                throw new Error('Model validation failed: version ordinal duplicated (' + values[i].ordinal.toLowerCase() + ')');
+            }
+            ordinalValues.push(values[i].ordinal.toLowerCase());            
+        };
+        return true;
+    }
+});
+
 // check if already have a similar model (idempotent)
 // same name and same owner
 modelSchema.pre('save', async function() {

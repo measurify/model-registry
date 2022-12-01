@@ -12,9 +12,9 @@ router.get('/:id', catchErrors(modelController.getone));
 router.post('/', catchErrors(modelController.post));
 router.delete('/:id',  catchErrors(modelController.delete));
 router.put('/:id',  catchErrors(modelController.put));
-router.get('/:id/versions/:original', catchErrors(versionController.get));
+router.get('/:id/versions/:ordinal', catchErrors(versionController.get));
 router.post('/:id/versions', upload.single('file'), catchErrors(versionController.post));
-router.delete('/:id/versions/:original', catchErrors(versionController.delete));
+router.delete('/:id/versions/:ordinal', catchErrors(versionController.delete));
 
 
 module.exports = router;

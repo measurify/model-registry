@@ -127,8 +127,8 @@ exports.valorizeMetadata = async function(name, value) {
     return { name: name, value: value};
 };
 
-exports.createVersion = async function(key, original) {
-    return { key: key, original: original, encoding: "ecoding", mimetype: "mimetype", size: 1000};
+exports.createVersion = async function(ordinal, key, original, ) {
+    return { ordinal: ordinal, key: key, original: original, encoding: "ecoding", mimetype: "mimetype", size: 1000};
 };
   
 exports.createModel = async function(name, owner, users, datasets, versions, status, metadata, visibility, tags, tenant) {
@@ -211,24 +211,24 @@ exports.createDemoContent = async function(tenant) {
     metadata_3.push(await this.valorizeMetadata('name_4_folk', 'value_7'));
 
     const versions_dataset_1 = [];
-    versions_dataset_1.push(await this.createVersion('1000', 'file_dataset_1_1.csv'));
-    versions_dataset_1.push(await this.createVersion('1001', 'file_dataset_1_2.csv'));
+    versions_dataset_1.push(await this.createVersion(1,'1000', 'file_dataset_1_1.csv'));
+    versions_dataset_1.push(await this.createVersion(2,'1001', 'file_dataset_1_2.csv'));
 
     const versions_dataset_2 = [];
-    versions_dataset_2.push(await this.createVersion('1002', 'file_dataset_2_1.csv'));
-    versions_dataset_2.push(await this.createVersion('1003', 'file_dataset_2_2.csv'));
-    versions_dataset_2.push(await this.createVersion('1004', 'file_dataset_2_3.csv'));
+    versions_dataset_2.push(await this.createVersion(1,'1002', 'file_dataset_2_1.csv'));
+    versions_dataset_2.push(await this.createVersion(2,'1003', 'file_dataset_2_2.csv'));
+    versions_dataset_2.push(await this.createVersion(3,'1004', 'file_dataset_2_3.csv'));
 
     const datasets = [];
     datasets.push(await this.createDataset('dataset_1', users[0], [users[1], users[2]], versions_dataset_1, metadata_1, VisibilityTypes.public, [tags[2], "Folk_tag_1"], tenant));
     datasets.push(await this.createDataset('dataset_2', users[1], [users[2], users[3]], versions_dataset_2, metadata_2, VisibilityTypes.private, [tags[1], "Folk_tag_2"], tenant));    
 
     const versions_model_1 = [];
-    versions_model_1.push(await this.createVersion('1005', 'file_model_1_1.csv'));
+    versions_model_1.push(await this.createVersion(1,'1005', 'file_model_1_1.csv'));
 
     const versions_model_2 = [];
-    versions_model_2.push(await this.createVersion('1006', 'file_model_2_1.csv'));
-    versions_model_2.push(await this.createVersion('1006', 'file_model_2_2.csv'));
+    versions_model_2.push(await this.createVersion(1,'1006', 'file_model_2_1.csv'));
+    versions_model_2.push(await this.createVersion(2,'1007', 'file_model_2_2.csv'));
 
     const models = [];
     models.push(await this.createModel('model_1', users[0], [users[1], users[2]], [datasets[0]], versions_model_1, ModelStatusTypes.training, metadata_1, VisibilityTypes.public, [tags[2], "Folk_tag_1"], tenant));

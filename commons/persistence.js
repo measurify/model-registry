@@ -117,7 +117,7 @@ exports.update = async function(body, fields, resource, model, tenant) {
 
                 // List of generic objects
                 let key = 'name';
-                if(body.versions) key = 'original';
+                if(body.versions) key = 'ordinal';
                 result = await modifyObjectValueList(body[field], resource, field, key);
                 if (result == true) break;
                 else if (result) throw result;

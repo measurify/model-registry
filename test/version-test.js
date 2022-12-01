@@ -67,7 +67,7 @@ describe('/POST version', () => {
         res.body.message.should.be.eql(errors.restricted_access_modify.message);
     });
 
-    it('it should not POST a version of a dataset with the same filename', async () => {
+    it('it should POST a version of a dataset with the same filename (but different ordinal)', async () => {
         const owner = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
         const dataset = await factory.createDataset("test-dataset-1", owner, [], [], [], VisibilityTypes.private, []);
         const file = './test/test.png';
@@ -76,16 +76,20 @@ describe('/POST version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
-        const key = res.body.versions[0].key
+        res.body.versions[0].ordinal.should.be.eql('1');
+        const key = res.body.versions[0].key;        
         res = await chai.request(server).keepOpen().post('/v1/datasets/' + dataset._id + '/versions').attach('file', file).set("Authorization", await factory.getUserToken(owner));
-        res.should.have.status(errors.generic_request_error.status);
-        res.body.should.be.a('object');
-        res.body.message.should.be.a('string');
-        res.body.message.should.be.eql(errors.generic_request_error.message);
+        res.should.have.status(200);
+        res.body.versions.should.be.a('array');
+        res.body.versions.length.should.be.eql(2);
+        res.body.versions[1].original.should.be.eql('test.png');
+        res.body.versions[1].ordinal.should.be.eql('2');
+        const key2 = res.body.versions[1].key; 
         await filemanager.delete(key);
+        await filemanager.delete(key2);
     });
 
-    it('it should not POST a version of a dataset with the same filename', async () => {
+    it('it should POST a version of a dataset with the same filename (but different ordinal)', async () => {
         const owner = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
         const model = await factory.createModel("test-model-1", owner, [], [], [], ModelStatusTypes.training, [], VisibilityTypes.private, []);
         const file = './test/test.png';
@@ -94,12 +98,58 @@ describe('/POST version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('1');
         const key = res.body.versions[0].key;
         res = await chai.request(server).keepOpen().post('/v1/models/' + model._id + '/versions').attach('file', file).set("Authorization", await factory.getUserToken(owner));
-        res.should.have.status(errors.generic_request_error.status);
+        res.should.have.status(200);
+        res.body.versions.should.be.a('array');
+        res.body.versions.length.should.be.eql(2);
+        res.body.versions[1].original.should.be.eql('test.png');
+        res.body.versions[1].ordinal.should.be.eql('2');
+        const key2 = res.body.versions[1].key;
+        await filemanager.delete(key);
+        await filemanager.delete(key2);
+    });
+
+    it('it should POST a version of a dataset with the same filename (choosing my custom ordinal)', async () => {
+        const owner = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
+        const model = await factory.createModel("test-model-1", owner, [], [], [], ModelStatusTypes.training, [], VisibilityTypes.private, []);
+        const file = './test/test.png';
+        let res = await chai.request(server).keepOpen().post('/v1/models/' + model._id + '/versions?ordinal=70').attach('file', file).set("Authorization", await factory.getUserToken(owner));
+        res.should.have.status(200);
+        res.body.versions.should.be.a('array');
+        res.body.versions.length.should.be.eql(1);
+        res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('70');
+        const key = res.body.versions[0].key;
+        res = await chai.request(server).keepOpen().post('/v1/models/' + model._id + '/versions?ordinal=100').attach('file', file).set("Authorization", await factory.getUserToken(owner));
+        res.should.have.status(200);
+        res.body.versions.should.be.a('array');
+        res.body.versions.length.should.be.eql(2);
+        res.body.versions[1].original.should.be.eql('test.png');
+        res.body.versions[1].ordinal.should.be.eql('100');
+        const key2 = res.body.versions[1].key;
+        await filemanager.delete(key);
+        await filemanager.delete(key2);
+    });
+
+    it('it should not POST a version of a dataset with the same custom ordinal value', async () => {
+        const owner = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
+        const model = await factory.createModel("test-model-1", owner, [], [], [], ModelStatusTypes.training, [], VisibilityTypes.private, []);
+        const file = './test/test.png';
+        let res = await chai.request(server).keepOpen().post('/v1/models/' + model._id + '/versions?ordinal=70').attach('file', file).set("Authorization", await factory.getUserToken(owner));
+        res.should.have.status(200);
+        res.body.versions.should.be.a('array');
+        res.body.versions.length.should.be.eql(1);
+        res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('70');
+        const key = res.body.versions[0].key;
+        res = await chai.request(server).keepOpen().post('/v1/models/' + model._id + '/versions?ordinal=70').attach('file', file).set("Authorization", await factory.getUserToken(owner));
+        res.should.have.status(errors.post_request_error.status);
         res.body.should.be.a('object');
         res.body.message.should.be.a('string');
-        res.body.message.should.be.eql(errors.generic_request_error.message);
+        res.body.message.should.be.eql(errors.post_request_error.message);
+        res.body.details.should.be.eql("Ordinal value duplicated: 70 , Please choose another value or let default incremental choice");
         await filemanager.delete(key);
     });
 });
@@ -115,7 +165,8 @@ describe('/DELETE version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
-        res = await chai.request(server).keepOpen().delete('/v1/models/' + model._id + '/versions/test.png').set("Authorization", await factory.getUserToken(owner));
+        res.body.versions[0].ordinal.should.be.eql('1');
+        res = await chai.request(server).keepOpen().delete('/v1/models/' + model._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(owner));
         res.should.have.status(200);
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(0);
@@ -129,8 +180,9 @@ describe('/DELETE version', () => {
         res.should.have.status(200);
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
-        res.body.versions[0].original.should.be.eql('test.png');
-        res = await chai.request(server).keepOpen().delete('/v1/datasets/' + dataset._id + '/versions/test.png').set("Authorization", await factory.getUserToken(owner));
+        res.body.versions[0].original.should.be.eql('test.png');        
+        res.body.versions[0].ordinal.should.be.eql('1');
+        res = await chai.request(server).keepOpen().delete('/v1/datasets/' + dataset._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(owner));
         res.should.have.status(200);
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(0);
@@ -146,8 +198,9 @@ describe('/DELETE version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('1');
         const key = res.body.versions[0].key
-        res = await chai.request(server).keepOpen().delete('/v1/models/' + model._id + '/versions/test.png').set("Authorization", await factory.getUserToken(user));
+        res = await chai.request(server).keepOpen().delete('/v1/models/' + model._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(user));
         res.should.have.status(errors.restricted_access_modify.status);
         res.body.should.be.a('object');
         res.body.message.should.be.a('string');
@@ -164,9 +217,10 @@ describe('/DELETE version', () => {
         res.should.have.status(200);
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
-        res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].original.should.be.eql('test.png');        
+        res.body.versions[0].ordinal.should.be.eql('1');
         const key = res.body.versions[0].key
-        res = await chai.request(server).keepOpen().delete('/v1/datasets/' + dataset._id + '/versions/test.png').set("Authorization", await factory.getUserToken(user));
+        res = await chai.request(server).keepOpen().delete('/v1/datasets/' + dataset._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(user));
         res.should.have.status(errors.restricted_access_modify.status);
         res.body.should.be.a('object');
         res.body.message.should.be.a('string');
@@ -187,8 +241,26 @@ describe('/GET version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('1');
         const key = res.body.versions[0].key
-        res = await chai.request(server).keepOpen().get('/v1/models/' + model._id + '/versions/test.png').set("Authorization", await factory.getUserToken(owner));
+        res = await chai.request(server).keepOpen().get('/v1/models/' + model._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(owner));
+        res.should.have.status(200);
+        res.header['content-type'].should.be.eql('application/octet-stream');
+        await filemanager.delete(key);
+    });
+
+    it('it should GET a version of a model with custom ordinal', async () => {
+        const owner = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
+        const model = await factory.createModel("test-model-1", owner, [], [], [], ModelStatusTypes.training, [], VisibilityTypes.private, []);
+        const file = './test/test.png';
+        let res = await chai.request(server).keepOpen().post('/v1/models/' + model._id + '/versions?ordinal=80').attach('file', file).set("Authorization", await factory.getUserToken(owner));
+        res.should.have.status(200);
+        res.body.versions.should.be.a('array');
+        res.body.versions.length.should.be.eql(1);
+        res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('80');
+        const key = res.body.versions[0].key
+        res = await chai.request(server).keepOpen().get('/v1/models/' + model._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(owner));
         res.should.have.status(200);
         res.header['content-type'].should.be.eql('application/octet-stream');
         await filemanager.delete(key);
@@ -203,8 +275,26 @@ describe('/GET version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('1');
         const key = res.body.versions[0].key
-        res = await chai.request(server).keepOpen().get('/v1/datasets/' + dataset._id + '/versions/test.png').set("Authorization", await factory.getUserToken(owner));
+        res = await chai.request(server).keepOpen().get('/v1/datasets/' + dataset._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(owner));
+        res.should.have.status(200);
+        res.header['content-type'].should.be.eql('application/octet-stream');
+        await filemanager.delete(key);
+    });
+
+    it('it should GET a version of a dataset with custom ordinal', async () => {
+        const owner = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
+        const dataset = await factory.createDataset("test-dataset-1", owner, [], [], [], VisibilityTypes.private, []);
+        const file = './test/test.png';
+        let res = await chai.request(server).keepOpen().post('/v1/datasets/' + dataset._id + '/versions?ordinal=110').attach('file', file).set("Authorization", await factory.getUserToken(owner));
+        res.should.have.status(200);
+        res.body.versions.should.be.a('array');
+        res.body.versions.length.should.be.eql(1);
+        res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('110');
+        const key = res.body.versions[0].key
+        res = await chai.request(server).keepOpen().get('/v1/datasets/' + dataset._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(owner));
         res.should.have.status(200);
         res.header['content-type'].should.be.eql('application/octet-stream');
         await filemanager.delete(key);
@@ -220,8 +310,9 @@ describe('/GET version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('1');
         const key = res.body.versions[0].key
-        res = await chai.request(server).keepOpen().get('/v1/datasets/' + dataset._id + '/versions/test.png').set("Authorization", await factory.getUserToken(user));
+        res = await chai.request(server).keepOpen().get('/v1/datasets/' + dataset._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(user));
         res.should.have.status(200);
         res.header['content-type'].should.be.eql('application/octet-stream');
         await filemanager.delete(key);
@@ -237,8 +328,9 @@ describe('/GET version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('1');
         const key = res.body.versions[0].key
-        res = await chai.request(server).keepOpen().get('/v1/models/' + model._id + '/versions/test.png').set("Authorization", await factory.getUserToken(user));
+        res = await chai.request(server).keepOpen().get('/v1/models/' + model._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(user));
         res.should.have.status(200);
         res.header['content-type'].should.be.eql('application/octet-stream');
         await filemanager.delete(key);
@@ -254,8 +346,9 @@ describe('/GET version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('1');
         const key = res.body.versions[0].key
-        res = await chai.request(server).keepOpen().get('/v1/models/' + model._id + '/versions/test.png').set("Authorization", await factory.getUserToken(user));
+        res = await chai.request(server).keepOpen().get('/v1/models/' + model._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(user));
         res.should.have.status(200);
         res.header['content-type'].should.be.eql('application/octet-stream');
         await filemanager.delete(key);
@@ -271,8 +364,9 @@ describe('/GET version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('1');
         const key = res.body.versions[0].key
-        res = await chai.request(server).keepOpen().get('/v1/datasets/' + dataset._id + '/versions/test.png').set("Authorization", await factory.getUserToken(user));
+        res = await chai.request(server).keepOpen().get('/v1/datasets/' + dataset._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(user));
         res.should.have.status(200);
         res.header['content-type'].should.be.eql('application/octet-stream');
         await filemanager.delete(key);
@@ -289,7 +383,7 @@ describe('/GET version', () => {
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
         const key = res.body.versions[0].key;
-        res = await chai.request(server).keepOpen().get('/v1/datasets/' + dataset._id + '/versions/test.png').set("Authorization", await factory.getUserToken(user));
+        res = await chai.request(server).keepOpen().get('/v1/datasets/' + dataset._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(user));
         res.should.have.status(errors.restricted_access_read.status);
         res.body.should.be.a('object');
         res.body.message.should.be.a('string');
@@ -307,8 +401,9 @@ describe('/GET version', () => {
         res.body.versions.should.be.a('array');
         res.body.versions.length.should.be.eql(1);
         res.body.versions[0].original.should.be.eql('test.png');
+        res.body.versions[0].ordinal.should.be.eql('1');
         const key = res.body.versions[0].key;
-        res = await chai.request(server).keepOpen().get('/v1/models/' + model._id + '/versions/test.png').set("Authorization", await factory.getUserToken(user));
+        res = await chai.request(server).keepOpen().get('/v1/models/' + model._id + '/versions/'+res.body.versions[0].ordinal).set("Authorization", await factory.getUserToken(user));
         res.should.have.status(errors.restricted_access_read.status);
         res.body.should.be.a('object');
         res.body.message.should.be.a('string');

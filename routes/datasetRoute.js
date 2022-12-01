@@ -12,8 +12,8 @@ router.get('/:id', catchErrors(datasetController.getone));
 router.post('/', catchErrors(datasetController.post));
 router.delete('/:id',  catchErrors(datasetController.delete));
 router.put('/:id',  catchErrors(datasetController.put));
-router.get('/:id/versions/:original', catchErrors(versionController.get));
+router.get('/:id/versions/:ordinal', catchErrors(versionController.get));
 router.post('/:id/versions', upload.single('file'), catchErrors(versionController.post));
-router.delete('/:id/versions/:original', catchErrors(versionController.delete));
+router.delete('/:id/versions/:ordinal', catchErrors(versionController.delete));
 
 module.exports = router;
