@@ -23,11 +23,11 @@ const init = async function(tenant, username, password) {
     if(!user) await factory.createUser(username, password, UserRoles.admin, tenant);      
 };
 
-const create = async function(id) {
+const create = async function(id,database) {
     const Tenant = mongoose.dbs['catalog'].model('Tenant');
     let tenant = await Tenant.findById(id);
     if(!tenant) { 
-        const req = { _id: id, database: process.env.DEFAULT_TENANT_DATABASE };
+        const req = { _id: id, database: database };
         tenant = new Tenant(req);
         await tenant.save();
         await init(tenant);     
@@ -37,7 +37,8 @@ const create = async function(id) {
 
 exports.getList = async function() {
     const Tenant = mongoose.dbs['catalog'].model('Tenant');
-    await create(process.env.DEFAULT_TENANT);
+    await create(process.env.DEFAULT_TENANT, process.env.DEFAULT_TENANT_DATABASE);
+    await create(process.env.DEFAULT_TENANT_DEMO, process.env.DEFAULT_TENANT_DEMO);  
     return await Tenant.find({});
 };
 

@@ -15,6 +15,7 @@ exports.restricted_access_modify             = { status: 403, value: 12, message
 exports.restricted_access_delete             = { status: 403, value: 13, message: 'You cannot delete this resource' };
 exports.only_administrator                   = { status: 403, value: 13, message: 'Only administrators can do this operation' };
 exports.incorrect_info                       = { status: 401, value: 14, message: 'Please, the body information is missing valid fields'}; 
+exports.demo_tenant_required                 = { status: 403, value: 15, message: 'Demo routes only work in the demo tenant' };
 
 exports.manage = function(res, error, more) {
     if( typeof more === 'object' && more !== null) more = more.toString();

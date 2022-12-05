@@ -23,7 +23,7 @@ describe('/GET tenant', () => {
         const res = await chai.request(server).keepOpen().get('/v1/tenants').set("Authorization", process.env.API_TOKEN);
         res.should.have.status(200);
         res.body.docs.should.be.a('array');
-        res.body.docs.length.should.be.eql(3);
+        res.body.docs.length.should.be.eql(4);
     });
 
     it('it should GET a specific tenant', async () => {
@@ -206,24 +206,24 @@ describe('/DELETE tenant', () => {
     it('it should DELETE a tenant', async () => {
         const tenant = await factory.createTenant("test-tenant-200", "organization-test-1", "test street", "test@email", "433232", "test", "test");
         const tenants_before = await before.Tenant.find();
-        tenants_before.length.should.be.eql(16);
+        tenants_before.length.should.be.eql(17);
         const res = await chai.request(server).keepOpen().delete('/v1/tenants/' + tenant._id).set("Authorization", process.env.API_TOKEN);
         res.should.have.status(200);
         res.body.should.be.a('object');
         const tenants_after = await before.Tenant.find();
-        tenants_after.length.should.be.eql(15);
+        tenants_after.length.should.be.eql(16);
     });
 
     it('it should not DELETE a fake tenant', async () => {
         const tenant = await factory.createTenant("test-tenant-200", "organization-test-1", "test street", "test@email", "433232", "test", "test");
         const tenants_before = await before.Tenant.find();
-        tenants_before.length.should.be.eql(16);
+        tenants_before.length.should.be.eql(17);
         const res = await chai.request(server).keepOpen().delete('/v1/tenants/fake_tenant').set("Authorization", process.env.API_TOKEN);
         res.should.have.status(errors.resource_not_found.status);
         res.body.should.be.a('object');
         res.body.message.should.contain(errors.resource_not_found.message);
         const tenants_after = await before.Tenant.find();
-        tenants_after.length.should.be.eql(16);
+        tenants_after.length.should.be.eql(17);
     });
 
     it('it should not DELETE a tenant without API token', async () => {

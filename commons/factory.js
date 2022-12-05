@@ -22,7 +22,7 @@ exports.dropContents = async function(tenant){
         for (let collection in mongoose.dbs[tenant.database].collections) { await mongoose.dbs[tenant.database].collections[collection].deleteMany(); };  
         await tenancy.init(tenant);   
     }
-    catch (error) { console.log('Error in dropping databae ' + tenant + '('+ error + ')')} 
+    catch (error) { console.log('Error in dropping database ' + tenant + '('+ error + ')')} 
 }
 
 exports.getAdminToken = async function(tenant) {
@@ -175,7 +175,7 @@ exports.createDataset = async function(name, owner, users, versions, metadata, v
 
 exports.createDemoContent = async function(tenant) {
     const Tenant = mongoose.dbs['catalog'].model('Tenant');
-    if(!tenant) tenant = await Tenant.findById(process.env.DEFAULT_TENANT);
+    if(!tenant) tenant = await Tenant.findById(process.env.DEFAULT_TENANT_DEMO);
 
     const users = [];
     users.push(await this.createUser('user-1', 'password', UserRoles.regular, tenant));
