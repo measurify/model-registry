@@ -11,5 +11,6 @@ exports.download = async function (req, res) {
     if(!req.element.key) return errors.manage(res, errors.generic_download_error, "Missing filename");
     const filename = await path.join(process.env.UPLOAD_PATH, req.element.key);
     if (!await fs.stat(filename)) return errors.manage(res, errors.generic_download_error, "File not found!");
-    return res.download(filename);
+    res.setHeader('Content-type', req.element.mimetype);
+    return res.download(filename,req.element.original);
 }
