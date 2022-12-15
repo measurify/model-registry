@@ -10,6 +10,7 @@ const authorizator = require('../security/authorization.js');
 exports.get = async (req, res) => {
     let model = mongoose.dbs[req.tenant.database].model('Model');
     if(req.originalUrl.includes('datasets')) model = mongoose.dbs[req.tenant.database].model('Dataset');
+    if(req.originalUrl.includes('algorithms')) model = mongoose.dbs[req.tenant.database].model('Algorithm');
     let result = await checker.isAvailable(req, res, model); if (result != true) return result;
     result = await checker.canRead(req, res); if (result != true) return result;
     result = await checker.isContained(req, res, 'versions', 'ordinal', req.params.ordinal); if (result != true) return result;
@@ -20,6 +21,7 @@ exports.post = async (req, res) => {
     if(!req.file) return errors.manage(res, errors.post_request_error, "Missing file");
     let model = mongoose.dbs[req.tenant.database].model('Model');
     if(req.originalUrl.includes('datasets')) model = mongoose.dbs[req.tenant.database].model('Dataset');
+    if(req.originalUrl.includes('algorithms')) model = mongoose.dbs[req.tenant.database].model('Algorithm');
     let result = await checker.isAvailable(req, res, model); if (result != true) { await filemanager.delete(req.file.filename); return result };
     result = await checker.canModify(req, res); if (result != true) { await filemanager.delete(req.file.filename); return result };
     //result = await checker.isAlreadyContained(req, res, 'versions', 'ordinal', req.file.originalname); if (result != true) { await filemanager.delete(req.file.filename); return result };
@@ -31,6 +33,7 @@ exports.post = async (req, res) => {
 exports.delete = async (req, res) => {
     let model = mongoose.dbs[req.tenant.database].model('Model');
     if(req.originalUrl.includes('datasets')) model = mongoose.dbs[req.tenant.database].model('Dataset');
+    if(req.originalUrl.includes('algorithms')) model = mongoose.dbs[req.tenant.database].model('Algorithm');
     let result = await checker.isAvailable(req, res, model); if (result != true) return result;
     result = await checker.canModify(req, res); if (result != true) return result;
     result = await checker.isContained(req, res, 'versions', 'ordinal', req.params.ordinal); if (result != true) return result;

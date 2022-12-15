@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 
 const UserRoles = require('../types/userRoles');
 const ModelStatusTypes = require('../types/modelStatusTypes.js'); 
+const AlgorithmStatusTypes = require('../types/algorithmStatusTypes.js'); 
 const VisibilityTypes = require('../types/visibilityTypes.js'); 
 const UsageTypes = require('../types/usageTypes.js'); 
 
@@ -152,6 +153,28 @@ exports.createModel = async function(name, owner, users, datasets, versions, sta
     this.createMetadatas(metadata, owner, UsageTypes.folk, tenant);
     return model._doc;
 };
+  
+exports.createAlgorithm = async function(name, owner, users, datasets, versions, status, metadata, visibility, tags, tenant) {
+    const Tenant = mongoose.dbs['catalog'].model('Tenant');
+    if(!tenant) tenant = await Tenant.findById(process.env.DEFAULT_TENANT);
+    const Algorithm = mongoose.dbs[tenant.database].model('Algorithm');
+    const req = { 
+        name: name,
+        owner: owner,
+        users: users || [],
+        datasets: datasets || [],
+        versions: versions || [],
+        status: status || AlgorithmStatusTypes.training,
+        metadata: metadata || [],
+        visibility: visibility || VisibilityTypes.public,
+        tags: tags || []
+    }
+    const algorithm = new Algorithm(req);
+    await algorithm.save();
+    this.createTags(tags, owner, UsageTypes.folk, tenant);
+    this.createMetadatas(metadata, owner, UsageTypes.folk, tenant);
+    return algorithm._doc;
+};
 
 exports.createDataset = async function(name, owner, users, versions, metadata, visibility, tags, tenant) {
     const Tenant = mongoose.dbs['catalog'].model('Tenant');
@@ -233,4 +256,8 @@ exports.createDemoContent = async function(tenant) {
     const models = [];
     models.push(await this.createModel('model_1', users[0], [users[1], users[2]], [datasets[0]], versions_model_1, ModelStatusTypes.training, metadata_1, VisibilityTypes.public, [tags[2], "Folk_tag_1"], tenant));
     models.push(await this.createModel('model_2', users[1], [users[2], users[3]], [datasets[1]], versions_model_2, ModelStatusTypes.test, metadata_2, VisibilityTypes.private, [tags[1], "Folk_tag_3"], tenant));    
+
+    const algorithms = [];
+    algorithms.push(await this.createAlgorithm('algorithm_1', users[0], [users[1], users[2]], [datasets[0]], versions_model_1, AlgorithmStatusTypes.training, metadata_1, VisibilityTypes.public, [tags[2], "Folk_tag_1"], tenant));
+    algorithms.push(await this.createAlgorithm('algorithm_2', users[1], [users[2], users[3]], [datasets[1]], versions_model_2, AlgorithmStatusTypes.test, metadata_2, VisibilityTypes.private, [tags[1], "Folk_tag_3"], tenant)); 
 }

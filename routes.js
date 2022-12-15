@@ -48,6 +48,10 @@ router.use('/' + process.env.VERSION + '/datasets', passport.authenticate('jwt-t
 const modelsRoute = require('./routes/modelRoute');
 router.use('/' + process.env.VERSION + '/models', passport.authenticate('jwt-token', {session: false}), modelsRoute);
 
+// algorithms
+const algorithmsRoute = require('./routes/algorithmRoute');
+router.use('/' + process.env.VERSION + '/algorithms', passport.authenticate('jwt-token', {session: false}), algorithmsRoute);
+
 // type
 const typesRoute = require('./routes/typeRoute');
 router.use('/' + process.env.VERSION + '/types', typesRoute);
