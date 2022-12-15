@@ -1,0 +1,24 @@
+@import "./common/styles/vars";
+@import "./common/styles/functions";
+
+@import "~bootstrap/scss/bootstrap";
+
+.app {
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  min-height: 100vh;
+
+  @media screen and (max-width: 800px) {
+    flex-direction: column;
+  }
+
+  main {
+    position: relative;
+    flex: 1;
+    z-index: 0;
+    //calc witdh on the content based on two lateral bars
+    min-width: calc(94vw - $aside-width);
+    width: auto;
+  }
+}

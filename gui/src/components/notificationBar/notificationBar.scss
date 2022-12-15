@@ -1,0 +1,47 @@
+.notificationBar {
+  background: #123651;
+  color: #fff;
+  //z-index: 10;
+  position: sticky;
+  top: 0;
+  right: 0px;
+  align-items: center;
+  justify-items: center;
+  //height: 100vh;
+
+  @media screen and (max-width: 800px) {
+    height: auto;
+    width: 100%;
+  }
+
+  h1 {
+    padding: 20px;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 300;
+    margin: 0;
+    height: 63px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: default;
+
+    @media screen and (max-width: 800px) {
+      text-align: center;
+    }
+  }
+}
+
+.element {
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
+.highlight {
+  background-color: yellow !important;
+  color: #123651;
+  //color: red !important;
+  transform: scale(1.5);
+}

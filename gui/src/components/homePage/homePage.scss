@@ -1,0 +1,49 @@
+.home-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  overflow: auto;
+  //min-height: 100vh;
+  //width: 100%;
+
+  background-color: #f1f9fc;
+  //background-image: url("../../assets/img/background-login.png");
+  background-repeat: no-repeat;
+  //background-position: right;
+  background-size: contain;
+
+  .info-box {
+    position: absolute;
+    top: 6%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    max-height: 95vh;
+    padding-left: 2%;
+    background-color: rgba(18, 54, 81, 0.75);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    width: 35%;
+    min-width: 250px;
+    cursor: default;
+
+    a {
+      color: #fff;
+      cursor: pointer;
+    }
+    .info-text {
+      color: #fff;
+
+      text-decoration: none;
+      padding: 10px 20px;
+      margin: 0;
+      font-size: 18px;
+      font-weight: lighter;
+      line-height: 1.3em;
+
+      transition: 0.2s background-color ease 0s;
+      //hyphens: auto;
+      //width: 40%;
+    }
+  }
+}

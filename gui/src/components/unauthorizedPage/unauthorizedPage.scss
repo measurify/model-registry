@@ -1,0 +1,48 @@
+.unAuth-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  overflow: auto;
+  min-height: 100vh;
+  max-height: 100vh;
+
+  background-color: #d5e1e6;
+  //background-image: url("../../assets/img/404.png");
+  background-repeat: no-repeat;
+  background-position: right top;
+  background-size: 80%;
+
+  .info-box {
+    position: absolute;
+    top: 6%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    max-height: 95vh;
+    padding-left: 2%;
+    background-color: rgba(18, 54, 81, 0.5);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    width: 35%;
+    cursor: default;
+
+    a {
+      color: #fff;
+      cursor: pointer;
+    }
+    .info-text {
+      color: #fff;
+
+      text-decoration: none;
+      padding: 10px 20px;
+      margin: 0;
+      font-size: 20px;
+      font-weight: normal;
+      line-height: 1.4em;
+
+      transition: 0.2s background-color ease 0s;
+      //hyphens: auto;
+      //width: 40%;
+    }
+  }
+}

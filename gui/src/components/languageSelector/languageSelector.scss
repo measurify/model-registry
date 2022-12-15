@@ -1,0 +1,23 @@
+.language-selector {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  position: relative;
+
+  > label {
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    .premium-star {
+      margin-right: 5px;
+      margin-top: -3px;
+    }
+  }
+}
