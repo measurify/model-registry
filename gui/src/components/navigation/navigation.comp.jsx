@@ -20,7 +20,7 @@ import {
   faCheck,
 } from "@fortawesome/fontawesome-free-solid";
 
-import { pages, languages, website_name } from "../../config";
+import { restrictionPages, pages, languages, website_name } from "../../config";
 import { LanguageSelector } from "../languageSelector/languageSelector";
 import { capitalize } from "../../services/misc_functions";
 
@@ -226,6 +226,13 @@ export default function Navigation() {
           <div className="app-nav-text">{locale().tools}</div>
           <hr />
           {Object.keys(pages).map((k) => {
+            //check if user can access to the page
+            if (              
+              (restrictionPages[k] !== undefined &&
+                !restrictionPages[k].includes(role.current))
+            ) {
+              return "";
+            }
             return (
               <NavLink
                 to={`/` + k}

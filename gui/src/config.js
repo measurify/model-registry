@@ -2,7 +2,7 @@ import { isFeatureInUse, alwaysTrue } from "./services/validations";
 
 //url of APIs
 //export const api_url = "https://hi-drive.measurify.org:8080/v1";
-export const api_url = "https://registry.measurify.org/v1";
+export const api_url = "https://localhost/v1";
 
 //name of this dashboard, shown to users
 export const website_name = "Model Registry Dashboard";
@@ -106,28 +106,31 @@ export const editFields = {};
 //editFields["tags"] = { _id:"", usage: "" };
 
 editFields["models"] = {
-  status: "",
-  visibility: "",
-  users: [""],
+  name: "",      
+  metadata: [{ name: "", value: "" }],  
+  status: "",    
   datasets: [""],
-  metadata: [{ name: "", value: "" }],
-  tags: [""],
+  tags: [""], 
+  users: [""],
+  visibility: ""
 };
 
 editFields["algorithms"] = {
-  status: "",
-  visibility: "",
-  users: [""],
+  name: "",     
+  metadata: [{ name: "", value: "" }],  
+  status: "",     
   datasets: [""],
-  metadata: [{ name: "", value: "" }],
-  tags: [""],
+  tags: [""], 
+  users: [""],
+  visibility: ""
 };
 
 editFields["datasets"] = {
-  name: "", 
-  users: [""],
+  name: "",   
   metadata: [{ name: "", value: "" }],
   tags: [""],
+  users: [""],
+  visibility: ""
 };
 
 //add dictionary: key is the page, value is an array that contains the fields that can will be used to post the entity
@@ -151,31 +154,31 @@ addFields["tenants"] = {
 };
 
 addFields["datasets"] = {
-  name: "",
-  users: [""],
+  name: "",  
   metadata: [{ name: "", value: "" }],
-  visibility: "",
-  tags: [""]
+  tags: [""],
+  users: [""],
+  visibility: ""
 };
 
 addFields["models"] = {
-  name: "",
-  users: [""],
-  datasets: [""],
-  status: "",
+  name: "",  
   metadata: [{ name: "", value: "" }],
-  visibility: "",
-  tags: [""]
+  status: "",
+  datasets: [""],
+  tags: [""],
+  users: [""],
+  visibility: ""  
 };
 
 addFields["algorithms"] = {
-  name: "",
-  users: [""],
-  datasets: [""],
-  status: "",
+  name: "",  
   metadata: [{ name: "", value: "" }],
-  visibility: "",
-  tags: [""]
+  status: "",
+  datasets: [""],
+  tags: [""],
+  users: [""],
+  visibility: ""
 };
 
 addFields["versions"] = {
@@ -233,3 +236,8 @@ fetchedPageData["measurements"] = {
 fetchedPageData["datasets"] = { users: "users" };
 fetchedPageData["models"] = { datasets: "datasets", users: "users" };
 fetchedPageData["algorithms"] = { datasets: "datasets", users: "users" };
+
+//restriction dictionary: key is the page, value is an array of roles allowed to access to that page
+export const restrictionPages = {};
+restrictionPages["users"] = ["admin"];
+restrictionPages["tags"] = ["admin"];
