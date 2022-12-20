@@ -1,8 +1,10 @@
-import { api_url } from "../config";
+import { base_api_url } from "../config";
 
 const axios = require("axios").default;
 
 const https = require("https");
+
+export let api_url;
 
 const instance = axios.create({
   httpsAgent: new https.Agent({
@@ -16,6 +18,16 @@ export let notificationManager = {
   RemoveNotification: (id) => {},
   ClearNotifications: () => {},
 };
+
+//set APIs url according to configuration or GUI host
+export function SetAPIUrl() {
+  console.log(window.location.origin)
+  api_url =
+    base_api_url !== undefined ? base_api_url : 
+    (window.location.origin.includes("localhost")?window.location.origin.slice(
+      0,window.location.origin.indexOf(":",8)).replace("http:","https:")
+    :window.location.origin) + "/v1";
+}
 
 //login
 export function login(username, password, tenant) {

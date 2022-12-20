@@ -1,8 +1,8 @@
 import { isFeatureInUse, alwaysTrue } from "./services/validations";
 
 //url of APIs
-//export const api_url = "https://hi-drive.measurify.org:8080/v1";
-export const api_url = "https://localhost/v1";
+//base url of APIs (define it as undefined if you want to use the url where the GUI is actually hosted)
+export const base_api_url = undefined;
 
 //name of this dashboard, shown to users
 export const website_name = "Model Registry Dashboard";

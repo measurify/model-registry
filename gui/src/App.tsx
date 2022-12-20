@@ -30,6 +30,7 @@ import AddVersionPage from "./components/addVersionPage/addVersionPage";
 import { layout } from "./config";
 import AddMeasurementsPage from "./components/addMeasurementsPage/addMeasurementsPage";
 import cloneDeep from "clone-deep";
+import { SetAPIUrl } from "./services/http_operations";
 /*
     notifications follow this schema
 
@@ -55,6 +56,9 @@ function App() {
 
   let layoutRef = React.useRef<string | null>();
   const tkn = localStorage.getItem("token");
+  
+  //set api url to run https operations
+  SetAPIUrl();
 
   ////////////////NOTIFICATION MANAGEMENT FRAGMENT
   //function to push a new notification at the beginning of the list
