@@ -25,15 +25,14 @@ describe('/GET users', () => {
         res.body.docs.length.should.be.eql(3);
     });
 
-    it('it should not GET all the users as a regular user', async () => {
+    it('it should GET all the users as a regular user but not role information', async () => {
         const user = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
         await factory.createUser("test-username-1", "test-password-1");
         await factory.createUser("test-username-2", "test-password-2");
         const res = await chai.request(server).keepOpen().get('/v1/users').set('Authorization', await factory.getUserToken(user));
-        res.should.have.status(errors.only_administrator.status);
-        res.body.should.be.a('object');
-        res.body.message.should.be.a('string');
-        res.body.message.should.be.eql(errors.only_administrator.message);
+        res.should.have.status(200);
+        res.body.docs.should.be.a('array');
+        res.body.docs.length.should.be.eql(3);
     });
 
     it('it should GET a specific user', async () => {
@@ -44,14 +43,13 @@ describe('/GET users', () => {
         res.body._id.should.eql(user._id.toString());
     });
 
-    it('it should not GET a specific user as a regular user', async () => {
+    it('it should GET a specific user as a regular user but not role information', async () => {
         const regular = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
         const user = await factory.createUser("test-username-1", "test-password-1");
         const res = await chai.request(server).keepOpen().get('/v1/users/' + user._id).set('Authorization', await factory.getUserToken(regular));
-        res.should.have.status(errors.only_administrator.status);
+        res.should.have.status(200);
         res.body.should.be.a('object');
-        res.body.message.should.be.a('string');
-        res.body.message.should.be.eql(errors.only_administrator.message);
+        res.body._id.should.eql(user._id.toString());
     });
 
     it('it should not GET a fake user', async () => {

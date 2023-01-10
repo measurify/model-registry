@@ -119,17 +119,18 @@ exports.isValid = async function (req, res, type, field) {
     return true;
 }
 
-exports.createOrdinal= async function(req, res){//req.resource==item;req.query.ordinal=User Input
+exports.createOrdinal = async function (req, res) {//req.resource==item;req.query.ordinal=User Input
     if (req.query && req.query.ordinal !== undefined && req.query.ordinal !== "" && req.query.ordinal !== " ") {
         if (req.resource.versions) {
             const el = req.resource.versions.find(element => { return element.ordinal == req.query.ordinal });
-            if (el) { return errors.manage(res, errors.post_request_error, "Ordinal value duplicated: "+req.query.ordinal+" , Please choose another value or let default incremental choice"); }
+            if (el) { return errors.manage(res, errors.post_request_error, "Ordinal value duplicated: " + req.query.ordinal + " , Please choose another value or let default incremental choice"); }
             else { req.ordinal = req.query.ordinal; return true; }
         }
-        else { req.ordinal = req.query.ordinal; return true; }        
-    } 
-    if (!req.resource.versions||req.resource.versions.length===0){req.ordinal = 1; return true;}       
+        else { req.ordinal = req.query.ordinal; return true; }
+    }
+    if (!req.resource.versions || req.resource.versions.length === 0) { req.ordinal = 1; return true; }
     let ordinals = req.resource.versions.map(element => { return element.ordinal });
+    /*OLD check all ordinals and give an empty position in the list
     ordinals=cleanArrayOrdinal(ordinals);
     let maxN=Math.max(...ordinals);
     if( maxN === ordinals.length){ req.ordinal = maxN+1; return true;}
@@ -138,12 +139,17 @@ exports.createOrdinal= async function(req, res){//req.resource==item;req.query.o
             req.ordinal=i+1
             break;
         }
-    }   
-    if(req.ordinal)return true;
-    return errors.manage(res, errors.post_request_error, "Error in ordinal number default choice"); 
+    } */
+    //NEW CHECK THE MAX AND +1 and     
+    ordinals = ordinals.map(e => parseFloat(e)).filter(e => isNaN(e) === false);
+    let maxN = Math.max(...ordinals);
+    req.ordinal = Math.floor(maxN + 1);
+    return true;
 }
 
+/*
 function cleanArrayOrdinal(array) {
     array = array.filter(element => ( element >= 1 && element % 1 == 0 ) );    
     return array.sort((a,b) => a-b)
 }
+*/

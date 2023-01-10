@@ -129,7 +129,7 @@ exports.valorizeMetadata = async function(name, value) {
 };
 
 exports.createVersion = async function(ordinal, key, original, ) {
-    return { ordinal: ordinal, key: key, original: original, encoding: "ecoding", mimetype: "mimetype", size: 1000};
+    return { ordinal: ordinal, key: key, original: original, encoding: "encoding", mimetype: "mimetype", size: 1000};
 };
   
 exports.createModel = async function(name, owner, users, datasets, versions, status, metadata, visibility, tags, tenant) {
