@@ -72,24 +72,32 @@ pageActions["algorithmsVersion"] = ["downloadVersion", "deleteVersion"];
 
 //view dictionary: key is the page, value is an array that contains the fields shown to the user with "view" action
 export const viewFields = {};
-viewFields["users"] = ["username", "role"];
+viewFields["users"] = ["username", "role","_id"];
 viewFields["tags"] = ["_id", "usage", "owner", "actions"];
-viewFields["datasets"] = ["_id", "name", "metadata", "versions", "users"];
+viewFields["datasets"] = [ "name", "metadata", "versions","tags", "users", "visibility", "_id","owner"];
 viewFields["models"] = [
   "name",
   "metadata",
-  "datasets",
   "versions",
-  "users",
+  "status",
+  "datasets",  
   "tags",
+  "users",  
+  "visibility",
+  "_id",
+  "owner"
 ];
 viewFields["algorithms"] = [
   "name",
   "metadata",
-  "datasets",
   "versions",
-  "users",
+  "status",
+  "datasets",
   "tags",
+  "users",  
+  "visibility",
+  "_id",
+  "owner"
 ];
 
 
@@ -149,8 +157,7 @@ addFields["tenants"] = {
   email: "",
   phone: "",
   admin_username: "",
-  admin_password: "",
-  passwordhash: "",
+  admin_password: ""
 };
 
 addFields["datasets"] = {
@@ -233,9 +240,9 @@ fetchedPageData["measurements"] = {
   tags: "tags",
 };*/
 
-fetchedPageData["datasets"] = { users: "users" };
-fetchedPageData["models"] = { datasets: "datasets", users: "users" };
-fetchedPageData["algorithms"] = { datasets: "datasets", users: "users" };
+fetchedPageData["datasets"] = { users: "users",tags:"tags" };
+fetchedPageData["models"] = { datasets: "datasets", users: "users",tags:"tags" };
+fetchedPageData["algorithms"] = { datasets: "datasets", users: "users",tags:"tags" };
 
 //restriction dictionary: key is the page, value is an array of roles allowed to access to that page
 export const restrictionPages = {};

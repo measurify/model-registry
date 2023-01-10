@@ -5,6 +5,7 @@ import {
   get_generic,
   post_version_file_generic,
 } from "../../services/http_operations";
+import locale from "../../common/locale";
 import {
   isDefault,
   removeDefaultElements,
@@ -62,7 +63,8 @@ export default function AddVersionsPage(props) {
   //type of input to post resources
   const [postType, setPostType] = useState(addTypes[type][0]);
   //message for user
-  const [msg, setMsg] = useState("");
+  const [msg, setMsg] = useState("");  
+  const [isError, setIsError] = useState(false);
   //deep copy addOption dictionary without any references
   const [values, setValues] = useState(cloneDeep(addFields[type]));
 
@@ -163,7 +165,7 @@ export default function AddVersionsPage(props) {
     setValues(val);
   };
   //handle way selector to post new entity
-  const handleTypeSelect = (eventKey) => setPostType(eventKey);
+  const handleTypeSelect = (eventKey) => {setIsError(false);setMsg("");setPostType(eventKey)};
 
   const back = (e) => {
     e.preventDefault();
@@ -196,6 +198,7 @@ export default function AddVersionsPage(props) {
       console.log(error);
       res = error.error.response;
       //add details
+      setIsError(true);
       setMsg(
         error.error.response.data.message +
           " : " +
@@ -204,6 +207,7 @@ export default function AddVersionsPage(props) {
     }
 
     if (res.status === 200) {
+      setIsError(false);
       window.alert("Version uploaded successfully");
       navigate("/" + type + "/" + resource + "/" + id);
     }
@@ -212,6 +216,11 @@ export default function AddVersionsPage(props) {
   const postVersionFile = async (e) => {
     e.preventDefault();
     let res;
+    if (file === undefined) {
+      setMsg(locale().no_file);
+      setIsError(true);
+      return;
+    }
 
     const formData = new FormData();
     formData.append("file", file);
@@ -219,12 +228,14 @@ export default function AddVersionsPage(props) {
     try {
       const resp = await post_version_file_generic(resource, id, formData);
       res = resp.response;
+      setIsError(false);
       setMsg(res.statusText);
     } catch (error) {
       console.log(error);
 
       res = error.error.response;
       //add details
+      setIsError(true);
       setMsg(
         error.error.response.data.message +
           " : " +
@@ -308,7 +319,7 @@ export default function AddVersionsPage(props) {
               />
 
               <br />
-              <font style={{ marginLeft: 5 + "px" }}>{msg}</font>
+              <font style={{ marginLeft: 5 + "px" ,color: isError ? "red" : "black"}}>{msg}</font>
             </div>
           )}
           {postType === "file" && (
@@ -325,7 +336,7 @@ export default function AddVersionsPage(props) {
                 contentBody={contentBody}
                 filePickerExtensions={""}
               />
-              <font style={{ marginLeft: 5 + "px" }}>{msg}</font>
+              <font style={{ marginLeft: 5 + "px" ,color: isError ? "red" : "black"}}>{msg}</font>
             </div>
           )}
         </div>

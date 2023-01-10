@@ -58,6 +58,10 @@ const localization_en = {
   login_error: "Wrong login!",
   unauthorised_user: "You are not allowed to use this page",
   session_expired: "Session expired",
+  no_file: "Please, select a file",
+  no_username: "Please, insert your username",
+  no_password: "Please, insert your password",
+  define: "Please, define: "
 };
 
 export default localization_en;

@@ -16,27 +16,27 @@
     color: #123651;
   }
   .title-wrapper {
-    position: absolute;
+    //position: absolute;
     margin: 30px;
-    background-color: rgba(255, 255, 255, 0.5);
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
-    top: 5%;
-    left: 2%;
+    //background-color: rgba(255, 255, 255, 0.5);
+    //-webkit-backdrop-filter: blur(2px);
+    //backdrop-filter: blur(2px);
+    width: 35vw;
+    height: 25vh;
+    min-width: 200px;
+    min-height: 150px;
+    padding-top: 3%;
+    padding-left: 2%;
 
     //align-self: center;
   }
-  .input-checkbox {
-    -ms-transform: scale(4); /* IE */
-    -moz-transform: scale(4); /* FF */
-    -webkit-transform: scale(4); /* Safari and Chrome */
-    -o-transform: scale(4); /* Opera */
-    transform: scale(4);
-    margin-left: 8px;
+  .logo-section {
+    width: 5vw;
   }
+
   .title-section {
     //align-self: center;
-    font-size: 84px;
+    font-size: max(2vw, 20px);
     font-style: normal;
     font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
     font-stretch: ultra-expanded;
@@ -44,20 +44,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-right: 10px;
-    text-transform: uppercase;
+    //text-transform: uppercase;
   }
   .subtitle-section {
     //align-self: center;
-    font-size: 38px;
-    //font-style: italic;
+    font-size: max(0.6vw, 16px);
+    font-style: italic;
     font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
     font-stretch: ultra-condensed;
     color: #123651;
     display: flex;
-    justify-content: space-between;
+    //justify-content: space-between;
     align-items: center;
-    padding-right: 10px;
     //text-transform: uppercase;
   }
   .login-section {

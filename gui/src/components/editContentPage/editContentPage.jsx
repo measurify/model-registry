@@ -105,7 +105,6 @@ export default function EditContentPage(props) {
               resource
             );
           }
-          console.log(tmpValues)
           setValues(tmpValues);
           //deep copy and set state
           setOriginal(cloneDeep(tmpValues));

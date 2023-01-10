@@ -5,6 +5,7 @@ import {
   get_generic,
   post_file_generic,
 } from "../../services/http_operations";
+import locale from "../../common/locale";
 import {
   isDefault,
   removeDefaultElements,
@@ -60,6 +61,7 @@ export default function AddPage(props) {
   const [postType, setPostType] = useState("form");
   //message for user
   const [msg, setMsg] = useState("");
+  const [isError, setIsError] = useState(false);
   //deep copy addOption dictionary without any references
   const [values, setValues] = useState(cloneDeep(addFields[resource]));
 
@@ -171,7 +173,7 @@ export default function AddPage(props) {
     setValues(val);
   };
   //handle way selector to post new entity
-  const handleTypeSelect = (eventKey) => setPostType(eventKey);
+  const handleTypeSelect = (eventKey) => {setIsError(false);setMsg("");setPostType(eventKey)};
 
   const back = (e) => {
     e.preventDefault();
@@ -192,6 +194,31 @@ export default function AddPage(props) {
     let tmpValues = cloneDeep(body);
     removeDefaultElements(tmpValues);
 
+    const k = Object.keys(tmpValues);
+    const missingValues = [];
+
+    // key[0] is usually the _id or username or name, so it shouldn't be undefined
+    // may be unstable 
+    if (tmpValues[k[0]] === "") {
+      missingValues.push(k[0]);
+    }
+
+    //check if enums fetched from server are not empty
+    k.forEach((key) => {
+      if (
+        fetchedPageTypes[resource] !== undefined &&
+        fetchedPageTypes[resource][key] !== undefined &&
+        tmpValues[key] === ""
+      ) {
+        missingValues.push(key);
+      }
+    });
+
+    if (missingValues.length !== 0) {
+      setIsError(true);
+      setMsg(locale().define + missingValues.join(", "));
+      return;
+    }
     let res;
     try {
       const resp = await post_generic(
@@ -200,11 +227,13 @@ export default function AddPage(props) {
         token
       );
       res = resp.response;
+      setIsError(false);
       setMsg(res.statusText);
     } catch (error) {
       console.log(error);
       res = error.error.response;
       //add details
+      setIsError(true);
       setMsg(
         error.error.response.data.message +
           " : " +
@@ -224,6 +253,11 @@ export default function AddPage(props) {
   const postFile = async (e) => {
     e.preventDefault();
     let res;
+    if (file === undefined) {
+      setMsg(locale().no_file);
+      setIsError(true);
+      return;
+    }
     if (file.name.endsWith(".csv")) {
       const formData = new FormData();
       formData.append("file", file);
@@ -321,7 +355,14 @@ export default function AddPage(props) {
               />
 
               <br />
-              <font style={{ marginLeft: 5 + "px" }}>{msg}</font>
+              <font
+                style={{
+                  marginLeft: 5 + "px",
+                  color: isError ? "red" : "black",
+                }}
+              >
+                {msg}
+              </font>
             </div>
           )}
           {postType === "file" && (
@@ -337,7 +378,14 @@ export default function AddPage(props) {
                 contentHeader={contentHeader}
                 contentBody={contentBody}
               />
-              <font style={{ marginLeft: 5 + "px" }}>{msg}</font>
+              <font
+                style={{
+                  marginLeft: 5 + "px",
+                  color: isError ? "red" : "black",
+                }}
+              >
+                {msg}
+              </font>
             </div>
           )}
         </div>

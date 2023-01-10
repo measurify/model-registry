@@ -14,23 +14,23 @@ const instance = axios.create({
 });
 
 export let notificationManager = {
-  PushNotification: (obj) => {},
-  RemoveNotification: (id) => {},
-  ClearNotifications: () => {},
+  PushNotification: (obj) => { },
+  RemoveNotification: (id) => { },
+  ClearNotifications: () => { },
 };
 
 //set APIs url according to configuration or GUI host
 export function SetAPIUrl() {
   console.log(window.location.origin)
   api_url =
-    base_api_url !== undefined ? base_api_url : 
-    (window.location.origin.includes("localhost")?window.location.origin.slice(
-      0,window.location.origin.indexOf(":",8)).replace("http:","https:")
-    :window.location.origin) + "/v1";
+    base_api_url !== undefined ? base_api_url :
+      (window.location.origin.includes("localhost") ? window.location.origin.slice(
+        0, window.location.origin.indexOf(":", 8)).replace("http:", "https:")
+        : window.location.origin) + "/v1";
 }
 
 //login
-export function login(username, password, tenant) {
+export function login(username, password, tenant, saveToken = true) {
   const body = {
     username: `${username}`,
     password: `${password}`,
@@ -43,29 +43,23 @@ export function login(username, password, tenant) {
       //Authorization: GetToken(),
     },
   };
-
   const url_string = api_url + "/login";
 
   return new Promise((resolve, reject) => {
     instance
       .post(url_string, body, options)
       .then((response) => {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem(
-          "token-expiration-time",
-          response.data.token_expiration_time
-        );
-        localStorage.setItem("username", response.data.user.username);
-        localStorage.setItem("user-tenant", tenant);
-        localStorage.setItem("login-time", new Date().getTime().toString());
-
-        //model-registry uses role while other measurify servers use type, so check ofr one of thew two
-        const role =
-          response.data.user.type !== undefined
-            ? response.data.user.type
-            : response.data.user.role;
-        localStorage.setItem("user-role", role);
-
+        if (saveToken === true) {
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem(
+            "token-expiration-time",
+            response.data.token_expiration_time
+          );
+          localStorage.setItem("username", response.data.user.username);
+          localStorage.setItem("user-role", response.data.user.role);
+          localStorage.setItem("user-tenant", tenant);
+          localStorage.setItem("login-time", new Date().getTime().toString());
+        }
         resolve(response);
       })
       .catch((error) => {
@@ -73,7 +67,6 @@ export function login(username, password, tenant) {
       });
   });
 }
-
 //refresh token
 export function refreshToken() {
   const options = {
@@ -159,7 +152,7 @@ export async function post_version_file_generic(
   token = undefined
 ) {
   if (token === undefined) token = GetToken();
-  const url_string = api_url + "/" + resource_type + "/"+id+"/versions";
+  const url_string = api_url + "/" + resource_type + "/" + id + "/versions";
 
   console.log("POST file:" + url_string);
 
@@ -387,11 +380,11 @@ export async function delete_version(
     instance
       .delete(url_string, options)
       .then((response) => {
-          notificationManager.PushNotification({
-            name: "info",
-            time: new Date().toTimeString(),
-            msg: "Deleted resource: " + id + ", version of type: " + resource_type,
-          });
+        notificationManager.PushNotification({
+          name: "info",
+          time: new Date().toTimeString(),
+          msg: "Deleted resource: " + id + ", version of type: " + resource_type,
+        });
         resolve({ response: response }); //true;
       })
       .catch((error) => {
@@ -422,7 +415,7 @@ export async function delete_version(
   });
 }
 
-export async function get_generic(resource_type, qs = {},_options={}, token) {
+export async function get_generic(resource_type, qs = {}, _options = {}, token) {
   let url = api_url + "/" + resource_type + "/";
   if (token === undefined) token = GetToken();
 
@@ -440,15 +433,17 @@ export async function get_generic(resource_type, qs = {},_options={}, token) {
 
   console.log("GET :" + url);
 
-  let options = {..._options,...{
-    headers: {
-     "Content-Type": "application/json",
-      "Cache-Control": "no-cache",
-      Authorization: token,
-    },
+  let options = {
+    ..._options, ...{
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+        Authorization: token,
+      },
 
-    json: true,
-  }};
+      json: true,
+    }
+  };
   return new Promise((resolve, reject) => {
     instance
       .get(url, options)

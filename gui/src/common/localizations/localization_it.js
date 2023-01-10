@@ -59,6 +59,10 @@ const localization_it = {
   login_error: "Login errata!",
   unauthorised_user: "Non sei abilitato a utilizzare questa pagina",
   session_expired: "Sessione scaduta",
+  no_file: "Seleziona un file",
+  no_username: "Inserisci il tuo username",
+  no_password: "Inserisci la tua password",
+  define: "Definisci: "
 };
 
 export default localization_it;

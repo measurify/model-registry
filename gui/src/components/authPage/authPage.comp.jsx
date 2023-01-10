@@ -7,6 +7,7 @@ import { languages } from "../../config";
 import "./authPage.scss";
 import { LanguageSelector } from "../languageSelector/languageSelector";
 import { Form, Container, Row, Col } from "react-bootstrap";
+import { ReactComponent as Logo } from "../../resources/Hi_Drive_Logo_Claim_rgb.svg";
 const userRef = React.createRef();
 const pswRef = React.createRef();
 const tenantRef = React.createRef();
@@ -22,6 +23,15 @@ const AuthPageComp = () => {
     const psw = pswRef.current.value;
     const tenant = tenantRef.current.value;
 
+    if (user === "") {
+      setMsg(locale().no_username);
+      return;
+    }
+    if (psw === "") {
+      setMsg(locale().no_password);
+      return;
+    }
+
     try {
       await login(user, psw, tenant);
       window.location.replace("/");
@@ -34,9 +44,17 @@ const AuthPageComp = () => {
   return (
     <div className="auth-page">
       <div className="title-wrapper">
-        <div className="title-section">Measurify</div>
+        <div className="logo-section">
+          <Logo />
+        </div>
+        <div className="title-section">ML Registry Dashboard</div>
         <br />
-        <div className="subtitle-section">From the edge to cloud and back</div>
+        <div className="subtitle-section">
+          Powered by&nbsp;
+          <a target="_blank" href="https://github.com/measurify/model-registry">
+            Model Registry
+          </a>
+        </div>
       </div>
       {languages.length > 1 && (
         <div className="language-wrapper">

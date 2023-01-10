@@ -56,7 +56,7 @@ function App() {
 
   let layoutRef = React.useRef<string | null>();
   const tkn = localStorage.getItem("token");
-  
+
   //set api url to run https operations
   SetAPIUrl();
 

@@ -59,6 +59,10 @@ interface ILocalization {
   login_error: string;
   unauthorised_user: string;
   session_expired: string;
+  no_file:string;
+  no_username:string;
+  no_password:string;
+  define:string;
 }
 
 export default function locale() {

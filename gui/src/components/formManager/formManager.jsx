@@ -161,18 +161,18 @@ export const FormManager = (props) => {
                 e.preventDefault();
                 if (newValue === "" || newValue === null)
                   props.handleChangesCallback("", [key]);
-                else
-                  props.handleChangesCallback(newValue._id, [
-                    key
-                  ]);
+                else props.handleChangesCallback(newValue._id, [key]);
               }}
-              
               disabled={
                 props.disabledFields[key] !== undefined
                   ? props.disabledFields[key]
                   : false
               }
-              value={props.values[key] === "" ? null : options.filter((e) => e._id === props.values[key])[0]}
+              value={
+                props.values[key] === ""
+                  ? null
+                  : options.filter((e) => e._id === props.values[key])[0]
+              }
               options={options}
               getOptionLabel={(option) => {
                 return option.optionalLabel !== undefined
@@ -191,10 +191,7 @@ export const FormManager = (props) => {
                 </Box>
               )}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={locale().enter + " " + key}
-                />
+                <TextField {...params} label={locale().enter + " " + key} />
               )}
             />
           </Form.Group>
@@ -314,6 +311,7 @@ export const FormManager = (props) => {
     if (myFetched !== {} && myFetched.data[key] !== undefined) {
       options = myFetched.data[key];
     }
+    const allowedVal =options !==undefined? options.map((e) => e._id): [];
     return (
       <Row
         style={{
@@ -364,16 +362,30 @@ export const FormManager = (props) => {
                     </Button>
                   </Col>
                   <Col sm={4}>
-                    <Form.Group className="mb-3"   style={{backgroundColor:"white"}}>
+                    <Form.Group
+                      className="mb-3"
+                      style={{ backgroundColor: "white" }}
+                    >
                       {myFetched.data[key] !== undefined &&
                       options !== undefined ? (
                         <Autocomplete
+                          freeSolo={key === "tags" ? true : false}
+                          disableClearable
                           disabled={
                             props.disabledFields[key] !== undefined
                               ? props.disabledFields[key]
                               : false
                           }
                           id={key}
+                          onInputChange={(e) => {
+                            if(e===null)return;
+                            e.preventDefault();
+                            if (e.target.value === 0) return;
+                            props.handleChangesCallback(e.target.value, [
+                              key,
+                              index,
+                            ]);
+                          }}
                           onChange={(e, newValue) => {
                             e.preventDefault();
                             if (newValue === "" || newValue === null)
@@ -387,18 +399,20 @@ export const FormManager = (props) => {
                           value={
                             value === ""
                               ? null
-                              : options.filter((e) => e._id === value)[0]
+                              : allowedVal.includes(value)
+                              ? options.filter((e) => e._id === value)[0]
+                              : value
                           }
                           options={options}
                           getOptionLabel={(option) => {
                             return option.optionalLabel !== undefined
                               ? option.optionalLabel
-                              : option._id;
+                              :( option._id !==undefined ? option._id : option);
                           }}
                           renderOption={(props, option) => (
-                            <Box 
+                            <Box
                               component="li"
-                              sx={{ "& > img": { mr: 2, flexShrink: 0 }  }}
+                              sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
                               {...props}
                             >
                               {option.optionalLabel !== undefined

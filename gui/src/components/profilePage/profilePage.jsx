@@ -12,6 +12,8 @@ export default function ProfilePage(params) {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [msg, setMsg] = useState("");
+  const [isError, setIsError] = useState(false);
+  
   function renderIconRole() {
     if (role === "admin") {
       return (
@@ -50,13 +52,16 @@ export default function ProfilePage(params) {
   const submitPassword = async (e) => {
     e.preventDefault();
     if (oldPassword === "") {
+      setIsError(true)
       setMsg(locale().old_pass_empty);
     }
     if (password !== passwordConfirm) {
+      setIsError(true)
       setMsg(locale().pass_not_match);
       return;
     }
     if (password === "" || passwordConfirm === "") {
+      setIsError(true)
       setMsg(locale().pass_not_null);
       return;
     }
@@ -64,10 +69,10 @@ export default function ProfilePage(params) {
       await login(
         username,
         oldPassword,
-        tenant !== "-" ? tenant : undefined,
-        false
+        tenant !== "-" ? tenant : "", false
       );
     } catch (error) {
+      setIsError(true)
       setMsg(locale().old_pass_wrong);
       return;
     }
@@ -83,6 +88,7 @@ export default function ProfilePage(params) {
         setPassword("");
         setPasswordConfirm("");
         if (response.response.status === 200) {
+          setIsError(false)
           setMsg(locale().password_changed);
         }
       } catch (error) {
@@ -166,14 +172,20 @@ export default function ProfilePage(params) {
                       placeholder={locale().repeat + " new password"}
                       aria-describedby="passwordHelpBlock"
                     />
-                    <Form.Text id="passwordHelpBlock" muted>
-                      {msg}
-                    </Form.Text>
                   </Form.Group>
                 </Row>
-                <Button variant="primary" type="submit">
-                  {locale().submit}
-                </Button>
+                <Row>
+                  <Col>
+                    <font style={{ color: isError? "red" :"black"}}>{msg}</font>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Button variant="primary" type="submit">
+                      {locale().submit}
+                    </Button>
+                  </Col>
+                </Row>
               </Form>
             </Col>
           </Row>
