@@ -51,8 +51,8 @@ const AuthPageComp = () => {
         <br />
         <div className="subtitle-section">
           Powered by&nbsp;
-          <a target="_blank" href="https://github.com/measurify/model-registry">
-            Model Registry
+          <a target="_blank" href="https://measurify.org/">
+            Measurify
           </a>
         </div>
       </div>
