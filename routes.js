@@ -31,6 +31,8 @@ router.use('/' + process.env.VERSION + '/errors', docsRoute);
 // user
 const userRoute = require('./routes/userRoute');
 router.use('/' + process.env.VERSION + '/users', passport.authenticate('jwt-token', {session: false}), userRoute);
+const selfRoute = require('./routes/selfRoute');
+router.use('/' + process.env.VERSION + '/self', selfRoute);
 
 // tag
 const tagsRoute = require('./routes/tagRoute');

@@ -9,6 +9,7 @@ const ModelStatusTypes = require('../types/modelStatusTypes.js');
 const AlgorithmStatusTypes = require('../types/algorithmStatusTypes.js'); 
 const VisibilityTypes = require('../types/visibilityTypes.js'); 
 const UsageTypes = require('../types/usageTypes.js'); 
+const PasswordResetStatusTypes = require('../types/passwordResetStatusTypes');
 
 const { versions } = require('process');
 
@@ -61,7 +62,7 @@ exports.createTenant = async function(id, organization, address, email, phone, a
     return await Tenant.findById(tenant._id);
 };
 
-exports.createUser = async function(username, password, role, tenant) {
+exports.createUser = async function(username, password, role, tenant,email,validityPasswordDays,createdPassword) {
     if(role) if(!Object.values(UserRoles).includes(role)) throw new Error('Unrecognized role');
     const Tenant = mongoose.dbs['catalog'].model('Tenant');
     if(!tenant) tenant = await Tenant.findById(process.env.DEFAULT_TENANT);
@@ -72,13 +73,30 @@ exports.createUser = async function(username, password, role, tenant) {
         const req = { 
             username: username,
             password: password,
-            role: role || UserRoles.regular 
+            role: role || UserRoles.regular,
+            email:email||username+"@gmail.com",
+            validityPasswordDays:validityPasswordDays||0,
+            createdPassword:createdPassword
         };
         user = new User(req);
         await user.save();
     }
     return await User.findById(user._id);
 };
+
+exports.createReset = async function (user, tenant) {
+    const Tenant = mongoose.dbs["catalog"].model("Tenant");
+    if (!tenant) tenant = await Tenant.findById(process.env.DEFAULT_TENANT);
+    const PasswordReset = mongoose.dbs[tenant.database].model("PasswordReset");
+    const req = {
+      user: user._id,
+      status: PasswordResetStatusTypes.valid,
+      created: Date.now(),
+    };
+    const reset = new PasswordReset(req);
+    await reset.save();
+    return await PasswordReset.findById(reset._id);
+  };
 
 exports.createTag = async function(name, owner, usage, tenant) {
     const Tenant = mongoose.dbs['catalog'].model('Tenant');

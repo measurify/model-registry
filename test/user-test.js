@@ -66,7 +66,7 @@ describe('/GET users', () => {
 describe('/POST users', () => {
     it('it should not POST a user without username field', async () => {
         await factory.createUser("test-user", "test-userpassword-1");
-        const user = { password : "test-password-1", role : "regular" };
+        const user = { password : "test-password-1", role : "regular", email:"test-username-@gmail.com" };
         const res = await chai.request(server).keepOpen().post('/v1/users').set("Authorization", await factory.getAdminToken()).send(user);
         res.should.have.status(errors.post_request_error.status);
         res.body.should.be.a('object');
@@ -78,7 +78,7 @@ describe('/POST users', () => {
 
     it('it should not POST a user without password field', async () => {
         await factory.createUser("test-user", "test-userpassword-1");
-        const user = { username: "test-username-1",  role: "regular" };
+        const user = { username: "test-username-1",  role: "regular", email:"test-username-@gmail.com" };
         const res = await chai.request(server).keepOpen().post('/v1/users').set('Authorization', await factory.getAdminToken()).send(user);
         res.should.have.status(errors.post_request_error.status);
         res.body.should.be.a('object');
@@ -88,9 +88,21 @@ describe('/POST users', () => {
         res.body.details.should.contain("Path `password` is required");
     });
 
+    it('it should not POST a user without email field', async () => {
+        await factory.createUser("test-user", "test-userpassword-1");
+        const user = { username: "test-username-1",password : "test-password-1",  role: "regular"};
+        const res = await chai.request(server).keepOpen().post('/v1/users').set('Authorization', await factory.getAdminToken()).send(user);
+        res.should.have.status(errors.post_request_error.status);
+        res.body.should.be.a('object');
+        res.body.message.should.be.a('string');
+        res.should.have.status(errors.post_request_error.status);
+        res.body.message.should.contain(errors.post_request_error.message);
+        res.body.details.should.contain("Please, supply an email");
+    });
+
     it('it should not POST a user without role field', async () => {
         await factory.createUser("test-user", "test-userpassword-1");
-        const user = { username: "test-username-1", password : "test-password-1" };
+        const user = { username: "test-username-1", password : "test-password-1", email:"test-username-@gmail.com" };
         const res = await chai.request(server).keepOpen().post('/v1/users').set('Authorization', await factory.getAdminToken()).send(user);
         res.should.have.status(errors.post_request_error.status);
         res.body.should.be.a('object');
@@ -102,7 +114,7 @@ describe('/POST users', () => {
 
     it('it should not POST a user with a fake type', async () => {
         await factory.createUser("test-user", "test-userpassword-1");
-        const user = { username: "test-username-1", password : "test-password-1", role: "fake-type" };
+        const user = { username: "test-username-1", password : "test-password-1", role: "fake-type" , email:"test-username-@gmail.com"};
         const res = await chai.request(server).keepOpen().post('/v1/users').set('Authorization', await factory.getAdminToken()).send(user);
         res.should.have.status(errors.post_request_error.status);
         res.body.should.be.a('object');
@@ -114,7 +126,7 @@ describe('/POST users', () => {
 
     it('it should POST a user', async () => {
         await factory.createUser("test-user", "test-userpassword-1");
-        const user = { username : "test-username-1", password : "test-password-1", role: UserRoles.regular };
+        const user = { username : "test-username-1", password : "test-password-1", role: UserRoles.regular, email:"test-username-@gmail.com" };
         const res = await chai.request(server).keepOpen().post('/v1/users').set('Authorization', await factory.getAdminToken()).send(user);
         res.should.have.status(200);
         res.body.should.be.a('object');
@@ -127,7 +139,7 @@ describe('/POST users', () => {
     it('it should not POST a user with already existant username field', async () => {
         await factory.createUser("test-user", "test-userpassword-1");
         await factory.createUser("test-username-1", "test-password-1");
-        const user = { username : "test-username-1", password : "test-password-1", role : UserRoles.regular};
+        const user = { username : "test-username-1", password : "test-password-1", role : UserRoles.regular, email:"test-username-@gmail.com"};
         const res = await chai.request(server).keepOpen().post('/v1/users').set('Authorization', await factory.getAdminToken()).send(user);
         res.should.have.status(errors.post_request_error.status);
         res.body.should.be.a('object');
@@ -139,8 +151,8 @@ describe('/POST users', () => {
 
     it('it should POST a list of users', async () => {
         await factory.createUser("test-user", "test-userpassword-1");
-        const users = [ { username : "test-username-1", password : "test-password-1", role: UserRoles.regular }, 
-                        { username : "test-username-2", password : "test-password-2", role: UserRoles.regular } ]; 
+        const users = [ { username : "test-username-1", password : "test-password-1", role: UserRoles.regular, email:"test-username-1@gmail.com" }, 
+                        { username : "test-username-2", password : "test-password-2", role: UserRoles.regular , email:"test-username-2@gmail.com"} ]; 
         const res = await chai.request(server).keepOpen().post('/v1/users').set('Authorization', await factory.getAdminToken()).send(users)
         res.should.have.status(200);
         res.body.should.be.a('object');
@@ -151,11 +163,11 @@ describe('/POST users', () => {
     it('it should POST only not existing users from a list', async () => {
         await factory.createUser("test-username-1", "test-password-1");
         await factory.createUser("test-username-2", "test-password-2");
-        const users = [ { username : "test-username-1", password : "test-password-1", role: UserRoles.regular },
-                        { username : "test-username-1", password : "test-password-2", role: UserRoles.regular },
-                        { username : "test-username-3", password : "test-password-3", role: UserRoles.regular },
-                        { username : "test-username-4", password : "test-password-4", role: UserRoles.regular },
-                        { username : "test-username-5", password : "test-password-5", role: UserRoles.regular } ]; 
+        const users = [ { username : "test-username-1", password : "test-password-1", role: UserRoles.regular, email:"test-username-3@gmail.com" },
+                        { username : "test-username-1", password : "test-password-2", role: UserRoles.regular, email:"test-username-4@gmail.com" },
+                        { username : "test-username-3", password : "test-password-3", role: UserRoles.regular, email:"test-username-5@gmail.com" },
+                        { username : "test-username-4", password : "test-password-4", role: UserRoles.regular, email:"test-username-6@gmail.com" },
+                        { username : "test-username-5", password : "test-password-5", role: UserRoles.regular, email:"test-username-7@gmail.com" } ]; 
         const res = await chai.request(server).keepOpen().post('/v1/users').set('Authorization', await factory.getAdminToken()).send(users)
         res.should.have.status(202);
         res.body.should.be.a('object');

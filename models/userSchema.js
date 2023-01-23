@@ -6,6 +6,9 @@ mongoose.Promise = global.Promise;
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, index: true },
     password: { type: String, required: true, select: false },
+    createdPassword: {type: Date, default: Date.now },
+    validityPasswordDays: {type: Number, default: process.env.DEFAULT_DAYS_VALIDITY_PASSWORD },
+    email: { type: String, required: "Please, supply an email",index: true },
     role: { type: String, enum: UserRoles, required: true },
     timestamp: {type: Date, default: Date.now, select: false },
     lastmod: {type: Date, default: Date.now, select: false }
@@ -27,4 +30,12 @@ userSchema.pre('save', async function() {
     if(!this.role) throw new Error('User validation failed: please specify the user role');  
     if(!Object.values(UserRoles).includes(this.role)) throw new Error('User validation failed: unrecognized role');                      
 });
+
+//check email duplicated
+userSchema.pre('save', async function() {
+    if(this.isNew){let res = await this.constructor.findOne( { email:this.email});                                             
+    if(res) throw new Error('The email '+this.email+' already exists'); }                      
+});11
+656
+
 module.exports = userSchema;

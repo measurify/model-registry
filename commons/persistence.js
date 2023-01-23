@@ -3,6 +3,7 @@ const broker = require('../commons/broker.js');
 const tenancy = require('../commons/tenancy.js');
 const factory = require('../commons/factory.js');
 const bcrypt = require('bcryptjs');
+const { passwordStrength } = require('check-password-strength');
 
 exports.get = async function(id, field, model, select) {
     try {
@@ -52,7 +53,7 @@ exports.getList = async function(filter, sort, select, page, limit, restriction,
 }
 
 const postOne = async function(body, model, tenant) {
-    if(body.password) if(tenant.passwordhash == true) body.password = bcrypt.hashSync(body.password, 8);
+    if (body.password) body.password = checkPassword(body.password,tenant.passwordhash);
     const resource = await (new model(body)).save();
     if(model.modelName == 'Model') { broker.publish('model-' + body._id, body._id, body); }
     if(model.modelName == 'Tenant') { await tenancy.init(resource, body.admin_username, body.admin_password); }
@@ -65,7 +66,7 @@ const postList = async function(body, model, tenant) {
     for (let [i, element] of body.entries()) {
         try {
             element.owner = body.owner;
-            if(element.password) if(tenant.passwordhash == true) element.password = bcrypt.hashSync(element.password, 8);
+            if (element.password) element.password = checkPassword(element.password,tenant.passwordhash);
             const resource = await (new model(element)).save()
             if(model.modelName == 'Model') { broker.publish('model-' + body._id, body._id, body); }
             if(model.modelName == 'Tenant') { await tenancy.init(resource, body.admin_username, body.admin_password); }
@@ -186,4 +187,11 @@ const modifyObjectValueList = async function(list, resource, field, key) {
     if(list.add) { for (let value of list.add) { if (!resource[field].some(item => item[key] == value[key])) resource[field].push(value) }; }
     resource[field] = [...new Set(resource[field])];
     return true;
+}
+
+const checkPassword = function (password,passwordhash) {
+    const details = passwordStrength(password);
+    if (details.id < process.env.MIN_PASSWORD_STRENGTH) throw new Error('The password strength is ' + details.value + ', please choose a stronger password');//MIN_PASSWORD_STRENGTH:0=TOO WEAK; 1=WEAK; 2=MEDIUM; 3=STRONG
+    if (passwordhash === false || passwordhash === 'false') return password;
+    return bcrypt.hashSync(password, 8);
 }

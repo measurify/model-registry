@@ -16,6 +16,9 @@ exports.restricted_access_delete             = { status: 403, value: 13, message
 exports.only_administrator                   = { status: 403, value: 13, message: 'Only administrators can do this operation' };
 exports.incorrect_info                       = { status: 401, value: 14, message: 'Please, the body information is missing valid fields'}; 
 exports.demo_tenant_required                 = { status: 403, value: 15, message: 'Demo routes only work in the demo tenant: '+process.env.DEFAULT_TENANT_DEMO };
+exports.missing_info                         = { status: 401, value: 16, message: 'Please, the request body is empty' }; 
+exports.reset_invalid                        = { status: 403, value: 17, message: 'The reset password request is not valid' };
+exports.missing_email                        = { status: 401, value: 27, message: 'Please, specify the user email' };
 
 exports.manage = function(res, error, more) {
     if( typeof more === 'object' && more !== null) more = more.toString();

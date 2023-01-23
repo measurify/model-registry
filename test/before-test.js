@@ -26,8 +26,10 @@ before(async () => {
     this.Metadata = mongoose.dbs[process.env.DEFAULT_TENANT_DATABASE].model('Metadata');
     this.Model = mongoose.dbs[process.env.DEFAULT_TENANT_DATABASE].model('Model');
     this.Algorithm = mongoose.dbs[process.env.DEFAULT_TENANT_DATABASE].model('Algorithm');
-    this.Dataset = mongoose.dbs[process.env.DEFAULT_TENANT_DATABASE].model('Dataset');
+    this.Dataset = mongoose.dbs[process.env.DEFAULT_TENANT_DATABASE].model('Dataset');    
+    this.PasswordReset = mongoose.dbs[process.env.DEFAULT_TENANT_DATABASE].model('PasswordReset');
     this.Tenant = mongoose.dbs['catalog'].model('Tenant');
+    
 });
 
 beforeEach(async () => { 
