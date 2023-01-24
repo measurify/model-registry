@@ -11,3 +11,9 @@ exports.get = async (req, res) => {
     return res.status(200).json(types);    
 };
 
+exports.getPasswordStrength = async (req, res) => {
+    const passwordStrength = {passwordStrength:  process.env.MIN_PASSWORD_STRENGTH, ValidityPasswordDays:process.env.DEFAULT_DAYS_VALIDITY_PASSWORD};
+    res.status(200).json(passwordStrength);
+};
+
+

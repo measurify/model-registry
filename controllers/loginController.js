@@ -7,6 +7,7 @@ const errors = require('../commons/errors.js');
 exports.post = async (req, res) => {
     passport.authenticate('local', {session: false}, (err, user, info) => {
         if (err || !user) return errors.manage(res, errors.authentication_error, info);
+        if(user.validityPasswordDays&&areValidityDaysElapsed(user.createdPassword.getTime(),Date.now(),user.validityPasswordDays)){return errors.manage(res, errors.authentication_error, "Password validity expired, please reset password")}
         req.login(user, {session: false}, (error) => {
             const user_info = Object.assign({}, user._doc);
             const token_expiration_time = process.env.JWT_EXPIRATIONTIME;
@@ -20,6 +21,7 @@ exports.post = async (req, res) => {
 exports.put = async (req, res) => {
     passport.authenticate('jwt-renew', {session: false}, (err, user, info) => {
         if (err || !user) return errors.manage(res, errors.authentication_error, info);
+        if(user.validityPasswordDays&&areValidityDaysElapsed(user.createdPassword.getTime(),Date.now(),user.validityPasswordDays)){return errors.manage(res, errors.authentication_error, "Password validity expired, please reset password")}
         req.login(user, {session: false}, (error) => {
             const user_info = Object.assign({}, user._doc);
             const token_expiration_time = process.env.JWT_EXPIRATIONTIME;
@@ -32,4 +34,9 @@ exports.put = async (req, res) => {
 };
 
   
+const areValidityDaysElapsed=function (startData,currentData,daysValidity){   
+    let milliseconds = daysValidity * 24 * 60 * 60 * 1000;
+    return (startData+milliseconds)<currentData
+}
+
 

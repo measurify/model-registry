@@ -8,6 +8,7 @@ const init = async function(tenant, username, password) {
     const passwordhash = tenant.passwordhash;
     if(!username) username = process.env.DEFAULT_TENANT_ADMIN_USERNAME;
     if(!password) password = process.env.DEFAULT_TENANT_ADMIN_TEMPORARY_PASSWORD;
+    if(!tenant.email) tenant.email = process.env.DEFAULT_TENANT_EMAIL;
     if(!tenant.database) { tenant.database = tenant._id;  await tenant.save(); }
     mongoose.dbs[tenant.database] = await mongoose.dbs['catalog'].useDb(tenant.database);
     const models = await fs.readdirSync('./models/');
@@ -20,14 +21,14 @@ const init = async function(tenant, username, password) {
     };  
     const User = mongoose.dbs[tenant.database].model('User'); 
     let user = await User.findOne();
-    if(!user) await factory.createUser(username, password, UserRoles.admin, tenant);      
+    if(!user) await factory.createUser(username, password, UserRoles.admin, tenant,tenant.email,0);      
 };
 
-const create = async function(id,database) {
+const create = async function(id,database,passwordhash,email) {
     const Tenant = mongoose.dbs['catalog'].model('Tenant');
     let tenant = await Tenant.findById(id);
     if(!tenant) { 
-        const req = { _id: id, database: database };
+        const req = { _id: id, database: database, passwordhash: passwordhash, email: email };
         tenant = new Tenant(req);
         await tenant.save();
         await init(tenant);     
@@ -37,8 +38,8 @@ const create = async function(id,database) {
 
 exports.getList = async function() {
     const Tenant = mongoose.dbs['catalog'].model('Tenant');
-    await create(process.env.DEFAULT_TENANT, process.env.DEFAULT_TENANT_DATABASE);
-    await create(process.env.DEFAULT_TENANT_DEMO, process.env.DEFAULT_TENANT_DEMO);  
+    await create(process.env.DEFAULT_TENANT, process.env.DEFAULT_TENANT_DATABASE, process.env.DEFAULT_TENANT_PASSWORDHASH,process.env.DEFAULT_TENANT_EMAIL);
+    await create(process.env.DEFAULT_TENANT_DEMO, process.env.DEFAULT_TENANT_DEMO, process.env.DEFAULT_TENANT_PASSWORDHASH,process.env.DEFAULT_TENANT_EMAIL);  
     return await Tenant.find({});
 };
 

@@ -7,7 +7,7 @@ const tenantSchema = new mongoose.Schema({
     database: { type: String },
     organization: { type: String },
     address: { type: String },
-    email: { type: String },
+    email: { type: String, required: "Please, supply a valid email" },
     phone: { type: String },
     timestamp: {type: Date, default: Date.now, select: false },
     lastmod: {type: Date, default: Date.now, select: false },

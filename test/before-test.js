@@ -30,6 +30,9 @@ before(async () => {
     this.PasswordReset = mongoose.dbs[process.env.DEFAULT_TENANT_DATABASE].model('PasswordReset');
     this.Tenant = mongoose.dbs['catalog'].model('Tenant');
     
+    // Init env variables
+    process.env.MIN_PASSWORD_STRENGTH=1;
+    process.env.DEFAULT_DAYS_VALIDITY_PASSWORD=360;
 });
 
 beforeEach(async () => { 

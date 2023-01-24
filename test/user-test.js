@@ -179,6 +179,67 @@ describe('/POST users', () => {
         res.body.users[1].username.should.be.eql(users[3].username);
         res.body.users[2].username.should.be.eql(users[4].username);
     });
+
+    it("it should POST a user with validityPasswordDays", async () => {
+        await factory.createUser("test-user", "test-userpassword-1");
+        const user = {
+          username: "test-username-1",
+          password: "test-password-1",
+          role: UserRoles.regular,
+          email: "@test",
+          validityPasswordDays:10
+        };
+        const res = await chai.request(server).keepOpen().post("/v1/users").set("Authorization", await factory.getAdminToken()).send(user);
+        res.should.have.status(200);
+        res.body.should.be.a("object");
+        res.body.should.have.property("_id");
+        res.body.should.have.property("username");
+        res.body.should.have.property("role");
+        res.body.should.have.property("validityPasswordDays");
+        res.body.should.have.property("createdPassword");
+        res.body.username.should.be.eql(user.username);
+        res.body.validityPasswordDays.should.be.eql(user.validityPasswordDays);
+      });
+    
+      it("it should NOT POST a user with a password too weak", async () => {
+        await factory.createUser("test-user", "test-userpassword-1");
+        const user = {
+          username: "test-username-1",
+          password: "weak",
+          type: UserRoles.analyst,
+          email: "@test"
+        };
+        const res = await chai
+          .request(server)
+          .keepOpen()
+          .post("/v1/users")
+          .set("Authorization", await factory.getAdminToken())
+          .send(user);
+          res.should.have.status(errors.post_request_error.status);
+          res.body.should.be.a("object");
+          res.body.message.should.be.a("string");
+          res.should.have.status(errors.post_request_error.status);
+          res.body.message.should.contain(errors.post_request_error.message);
+          res.body.details.should.contain("The password strength is Too weak, please choose a stronger password");
+          const user2 = {
+            username: "test-username-1",
+            password: "w1@",
+            type: UserRoles.analyst,
+            email: "@test"
+          };
+          const res2 = await chai
+            .request(server)
+            .keepOpen()
+            .post("/v1/users")
+            .set("Authorization", await factory.getAdminToken())
+            .send(user2);
+            res2.should.have.status(errors.post_request_error.status);
+            res2.body.should.be.a("object");
+            res2.body.message.should.be.a("string");
+            res2.should.have.status(errors.post_request_error.status);
+            res2.body.message.should.contain(errors.post_request_error.message);
+            res2.body.details.should.contain("The password strength is Too weak, please choose a stronger password");
+      });
 });
 
 // Test the /DELETE route
