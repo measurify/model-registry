@@ -28,6 +28,48 @@ describe('/GET dataset', () => {
         res.body.docs.length.should.be.eql(2);
     });
 
+    it('it should GET all the datasets with query selection specific fields (_id and user always present)', async () => {
+        const user = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
+        await factory.createDataset("test-dataset-1", user, [], [], [], VisibilityTypes.private, []);
+        await factory.createDataset("test-dataset-2", user, [], [], [], VisibilityTypes.private, []);
+        let res = await chai.request(server).keepOpen().get('/v1/datasets?select=["_id","name","visibility","users"]').set("Authorization", await factory.getUserToken(user));
+        res.should.have.status(200);
+        res.body.docs.should.be.a('array');
+        res.body.docs.length.should.be.eql(2);        
+        Object.keys(res.body.docs[0]).length.should.be.eql(4);
+        Object.keys(res.body.docs[1]).length.should.be.eql(4);
+        res.body.docs[0].name.should.be.eql("test-dataset-2");
+        res.body.docs[0].visibility.should.be.eql("private");
+        res.body.docs[0].users.should.be.eql([]);
+        res = await chai.request(server).keepOpen().get('/v1/datasets?select=["visibility","users"]').set("Authorization", await factory.getUserToken(user));
+        res.should.have.status(200);
+        res.body.docs.should.be.a('array');
+        res.body.docs.length.should.be.eql(2);        
+        Object.keys(res.body.docs[0]).length.should.be.eql(3);
+        Object.keys(res.body.docs[1]).length.should.be.eql(3);
+        res.body.docs[0].visibility.should.be.eql("private");
+        res.body.docs[0].users.should.be.eql([]);
+        res = await chai.request(server).keepOpen().get('/v1/datasets?select=["_id"]').set("Authorization", await factory.getUserToken(user));
+        res.should.have.status(200);
+        res.body.docs.should.be.a('array');
+        res.body.docs.length.should.be.eql(2);        
+        Object.keys(res.body.docs[0]).length.should.be.eql(2);
+        Object.keys(res.body.docs[1]).length.should.be.eql(2);
+        res = await chai.request(server).keepOpen().get('/v1/datasets?select=["name"]').set("Authorization", await factory.getUserToken(user));
+        res.should.have.status(200);
+        res.body.docs.should.be.a('array');
+        res.body.docs.length.should.be.eql(2);        
+        Object.keys(res.body.docs[0]).length.should.be.eql(3);
+        Object.keys(res.body.docs[1]).length.should.be.eql(3);
+        res.body.docs[0].name.should.be.eql("test-dataset-2");
+        res = await chai.request(server).keepOpen().get('/v1/datasets?select=["fakeField"]').set("Authorization", await factory.getUserToken(user));
+        res.should.have.status(200);
+        res.body.docs.should.be.a('array');
+        res.body.docs.length.should.be.eql(2);        
+        Object.keys(res.body.docs[0]).length.should.be.eql(2);
+        Object.keys(res.body.docs[1]).length.should.be.eql(2);
+    });
+
     it('it should GET public, owned and shared datasets as regular user', async () => {
         const user_1 = await factory.createUser("test-username-1", "test-password-1", UserRoles.regular);
         const user_2 = await factory.createUser("test-username-2", "test-password-2", UserRoles.regular);

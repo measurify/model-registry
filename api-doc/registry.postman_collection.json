@@ -1290,13 +1290,46 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/v1/models",
+							"raw": "{{url}}/v1/datasets",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"v1",
-								"models"
+								"datasets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET all datasets select fields",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/datasets?select=['name','visibility','users']",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"datasets"
+							],
+							"query": [
+								{
+									"key": "select",
+									"value": "['name','visibility','users']"
+								}
 							]
 						}
 					},
