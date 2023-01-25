@@ -33,7 +33,7 @@ exports.post = async (req, res) => {
 
 exports.put = async (req, res) => {
     const User = mongoose.dbs[req.tenant.database].model('User');
-    const fields = ['password'];
+    const fields = ['email','password'];
     let result = await checker.isAvailable(req, res, User); if (result != true) return result;
     result = await checker.isFilled(req, res, fields); if (result != true) return result;
     result = await checker.isHim(req, res); if (result != true) return result;
