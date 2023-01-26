@@ -242,7 +242,7 @@ describe('/POST reset', () => {
         res.should.have.status(errors.post_request_error.status);
         res.body.should.be.a('object');
         res.body.message.should.be.a('string');
-        res.body.message.should.contain(errors.post_request_error.message);
+        res.body.message.should.contain(errors.put_request_error.message);
         res.body.details.should.contain('Unknown tenant');
     });
 
