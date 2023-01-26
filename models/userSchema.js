@@ -33,9 +33,8 @@ userSchema.pre('save', async function() {
 
 //check email duplicated
 userSchema.pre('save', async function() {
-    if(this.isNew){let res = await this.constructor.findOne( { email:this.email});                                             
-    if(res) throw new Error('The email '+this.email+' already exists'); }                      
-});11
-656
+    let res = await this.constructor.findOne( { email:this.email});                                             
+    if(res) throw new Error('The email '+this.email+' already exists');                       
+});
 
 module.exports = userSchema;

@@ -57,12 +57,12 @@ exports.reset = async (req, res) => {
     if(!req.query.tenant) return errors.manage(res, errors.get_request_error, "Query param `tenant` is required");
     const Tenant = mongoose.dbs['catalog'].model('Tenant');
     const tenant = await Tenant.findById(req.query.tenant);
-    if(!tenant) return errors.manage(res, errors.post_request_error, "Unknown tenant (" + req.query.tenant +")");
+    if(!tenant) return errors.manage(res, errors.put_request_error, "Unknown tenant (" + req.query.tenant +")");
     const User = mongoose.dbs[tenant.database].model('User');
     const PasswordReset = mongoose.dbs[tenant.database].model('PasswordReset');
     if(!req.body.email) return errors.manage(res, errors.missing_email);
     const user = await User.findOne({email: req.body.email});
-    if(!user) return errors.manage(res, errors.resource_not_found);
+    if(!user) return errors.manage(res, errors.resource_not_found,"User with the email "+ req.body.email+  " not found");
     const request = { user: user._id, status: PasswordResetStatusTypes.valid , created: Date.now() };
     const reset = await (new PasswordReset(request)).save();
     const url = req.protocol + '://' + req.get('host')
@@ -79,12 +79,12 @@ exports.password = async (req, res) => {
     const PasswordReset = mongoose.dbs[tenant.database].model('PasswordReset');
     if(!req.body.password) return errors.manage(res, errors.missing_info, "Body param `password` is required");
     if(!req.body.reset) return errors.manage(res, errors.missing_info, "Body param `reset` is required");
-    if(!ObjectId.isValid(req.body.reset)) return errors.manage(res, errors.resource_not_found, req.body.reset);
+    if(!ObjectId.isValid(req.body.reset)) return errors.manage(res, errors.resource_not_found, "The reset token " + req.body.reset +" is not a valid identifier (24 hex characters), please repeat the reset password procedure");
     const reset = await PasswordReset.findById(req.body.reset);
-    if(!reset) return errors.manage(res, errors.resource_not_found, req.body.reset);
+    if(!reset) return errors.manage(res, errors.resource_not_found, "The reset token " + req.body.reset +" doesn't exist, please check the token or repeat the reset password procedure");
     if(reset.status == PasswordResetStatusTypes.invalid) return errors.manage(res, errors.reset_invalid, req.body.reset);
     const user = await User.findById(reset.user);
-    if(!user) return errors.manage(res, errors.resource_not_found, 'user');
+    if(!user) return errors.manage(res, errors.resource_not_found, 'user of the reset request not found');
     const reset_updated = await PasswordReset.findByIdAndUpdate(req.body.reset, { "$set": { "status": PasswordResetStatusTypes.invalid } });   
     if(!isPasswordStrongEnough(req.body.password))return errors.manage(res, errors.get_request_error, "The password strength is too weak, make a new request to reset password and choose a stronger password");        
     if(tenant.passwordhash == true || tenant.passwordhash == 'true') req.body.password = bcrypt.hashSync(req.body.password, 8);
