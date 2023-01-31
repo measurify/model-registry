@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const controller = require('./controller');
 const checker = require('./checker');
 const folksonomy = require('./folksonomy.js');
+const filemanager = require('../commons/filemanager.js');
 
 exports.get = async (req, res) => { 
     const Model = mongoose.dbs[req.tenant.database].model('Model');
@@ -39,5 +40,7 @@ exports.delete = async (req, res) => {
     const Model = mongoose.dbs[req.tenant.database].model('Model');
     let result = await checker.isAvailable(req, res, Model); if (result != true) return result;
     result = await checker.canDelete(req, res); if (result != true) return result;
+    let model = await Model.findOne( { _id: req.resource.id });    
+    model.versions.forEach(async (version)=> await filemanager.delete(version.key));
     return await controller.deleteResource(req, res, Model);
 };

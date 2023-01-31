@@ -4,6 +4,7 @@ const checker = require('./checker');
 const broker = require('../commons/broker');
 const errors = require('../commons/errors.js');
 const folksonomy = require('./folksonomy.js');
+const filemanager = require('../commons/filemanager.js');
 
 exports.get = async (req, res) => { 
     const Dataset = mongoose.dbs[req.tenant.database].model('Dataset');
@@ -43,5 +44,7 @@ exports.delete = async (req, res) => {
     let result = await checker.isAvailable(req, res, Dataset); if (result != true) return result;
     result = await checker.canDelete(req, res); if (result != true) return result;
     result = await checker.isNotUsed(req, res, Model, 'datasets'); if (result != true) return result;
-    return await controller.deleteResource(req, res, Dataset);
+    let dataset = await Dataset.findOne( { _id: req.resource.id });    
+    dataset.versions.forEach(async (version)=> await filemanager.delete(version.key));
+    return await controller.deleteResource(req, res, Dataset);    
 };
