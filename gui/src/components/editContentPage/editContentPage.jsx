@@ -7,7 +7,14 @@ import {
   removeDefaultElements,
 } from "../../services/misc_functions";
 
-import { editFields, editFieldsSpecifier, fetchedPageData } from "../../config";
+import locale from "../../common/locale";
+
+import {
+  editFields,
+  editFieldsSpecifier,
+  fetchedPageData,
+  fetchedPageTypes,
+} from "../../config";
 
 import { useNavigate } from "react-router-dom";
 
@@ -29,6 +36,7 @@ export default function EditContentPage(props) {
   const [original, setOriginal] = useState();
   //message for user
   const [msg, setMsg] = useState("");
+  const [isError, setIsError] = useState(false);
   //redirect hook
   const navigate = useNavigate();
 
@@ -49,17 +57,20 @@ export default function EditContentPage(props) {
     // get the data from the api
     try {
       const response = await get_generic(res, { limit: 100 });
-      myFetched.UpdateData(response.docs.map((e) => {
-        return {
-          _id: e._id,
-          optionalLabel:
-            e.name !== undefined
-              ? e.name
-              : e.username !== undefined
-              ? e.username
-              : undefined,
-        };
-      }), res);
+      myFetched.UpdateData(
+        response.docs.map((e) => {
+          return {
+            _id: e._id,
+            optionalLabel:
+              e.name !== undefined
+                ? e.name
+                : e.username !== undefined
+                ? e.username
+                : undefined,
+          };
+        }),
+        res
+      );
     } catch (error) {
       console.log(error);
     }
@@ -85,11 +96,13 @@ export default function EditContentPage(props) {
       )
         tmpValues["datasets"] = data["datasets"].map((el) => el._id);
 
-        if (
-          data["users"] !== undefined &&
-          (resource === "models" || resource === "algorithms"|| resource === "datasets")
-        )
-          tmpValues["users"] = data["users"].map((el) => el._id);
+      if (
+        data["users"] !== undefined &&
+        (resource === "models" ||
+          resource === "algorithms" ||
+          resource === "datasets")
+      )
+        tmpValues["users"] = data["users"].map((el) => el._id);
       //this function evaluate if a field should be disabled or not
       const evaluateSpecifiers = async () => {
         if (editFieldsSpecifier[resource] === undefined) {
@@ -313,15 +326,48 @@ export default function EditContentPage(props) {
 
     //end da fare
 
+    const k = Object.keys(tmpValues);
+    const missingValues = [];
+
+    // key[0] is usually the _id or username or name, so it shouldn't be undefined
+    // may be unstable
+    if (tmpValues[k[0]] === "") {
+      missingValues.push(k[0]);
+    }
+    //check if enums fetched from server are not empty
+    k.forEach((key) => {
+      if (
+        (fetchedPageTypes[resource] !== undefined &&
+          fetchedPageTypes[resource][key] !== undefined &&
+          (tmpValues[key] === "" || tmpValues[key] === "Select " + key)) ||
+        ((key === "email" || key === "password") && tmpValues[key] === "")
+      ) {
+        missingValues.push(key);
+      }
+    });
+
+    if (missingValues.length !== 0) {
+      setIsError(true);
+      setMsg(locale().define + missingValues.join(", "));
+      return;
+    }
+    if (!Object.keys(toSend).length){
+      setIsError(true);
+      setMsg(locale().no_changes);
+      return;
+    }
+    
     let res;
     try {
       const resp = await put_generic(resource, toSend, id);
       res = resp.response;
+      setIsError(false);
       setMsg(res.statusText);
       navigate("/" + resource);
     } catch (error) {
       res = error.error.response;
       //add details
+      setIsError(true);
       setMsg(
         error.error.response.data.message +
           " : " +
@@ -346,7 +392,11 @@ export default function EditContentPage(props) {
           backFunction={back}
         />
         <br />
-        <font style={{ marginLeft: 5 + "px" }}>{msg}</font>
+        <font
+          style={{ marginLeft: 5 + "px", color: isError ? "red" : "black" }}
+        >
+          {msg}
+        </font>
       </main>
     </div>
   );

@@ -5,7 +5,7 @@ import { isFeatureInUse, alwaysTrue } from "./services/validations";
 export const base_api_url = undefined;
 
 //name of this dashboard, shown to users
-export const website_name = "Model Registry Dashboard";
+export const website_name = "ML Registry Dashboard";
 
 //languages enabled for this GUI, only english "en" and italian "it" are supported with this version
 //if no languages are enabled, the GUI will be localized in english
@@ -19,7 +19,7 @@ export const layout = "vertical";
 //dictionary of pages: key is the route for the API REST, value is an array that contains the fields shown to users
 //action is a special field that will enable actions for each row || still required, future version may have it removed
 export const pages = {};
-pages["users"] = ["username", "role", "actions"];
+pages["users"] = ["username", "role", "email", "actions"];
 pages["tags"] = ["_id", "usage", "actions"];
 pages["datasets"] = [
   "name",
@@ -61,7 +61,7 @@ aliasPages["algorithms"] = { original: "filename", timestamp: "data", size: "siz
 
 //actions dictionary: key is the page, value is an array that contains actions || working actions arae "view" | "edit" | "delete"
 export const pageActions = {};
-pageActions["users"] = ["view", "delete"];
+pageActions["users"] = ["view", "edit", "delete"];
 pageActions["tags"] = ["view", "delete"];
 pageActions["datasets"] = ["view", "edit", "versioning", "delete"];
 pageActions["models"] = ["view", "edit", "versioning", "delete"];
@@ -72,7 +72,7 @@ pageActions["algorithmsVersion"] = ["downloadVersion", "deleteVersion"];
 
 //view dictionary: key is the page, value is an array that contains the fields shown to the user with "view" action
 export const viewFields = {};
-viewFields["users"] = ["username", "role","_id"];
+viewFields["users"] = ["username", "role", "email","_id"];
 viewFields["tags"] = ["_id", "usage", "owner", "actions"];
 viewFields["datasets"] = [ "name", "metadata", "versions","tags", "users", "visibility", "_id","owner"];
 viewFields["models"] = [
@@ -141,6 +141,8 @@ editFields["datasets"] = {
   visibility: ""
 };
 
+editFields["users"]={username:"",email:""}
+
 //add dictionary: key is the page, value is an array that contains the fields that can will be used to post the entity
 //fields should be specified in the same format of the objet that will be represented:
 // - key:"" for an string field,
@@ -193,7 +195,7 @@ addFields["versions"] = {
   file: "",
 };
 
-addFields["users"] = { username: "", password: "", role: "" };
+addFields["users"] = { username: "", password: "", email:"", role: "" };
 
 addFields["tags"] = { _id: "", usage: "" };
 
@@ -202,9 +204,22 @@ addFields["tags"] = { _id: "", usage: "" };
 // type can be "disable" -> policy is applied to fields to be disabled, true when field should be disabled
 //
 export const editFieldsSpecifier = {};
-editFieldsSpecifier["features"] = {
-  _id: { type: "disable", policy: isFeatureInUse },
-  items: { type: "disable", policy: isFeatureInUse },
+//editFieldsSpecifier["features"] = {
+  //_id: { type: "disable", policy: isFeatureInUse },
+  //items: { type: "disable", policy: isFeatureInUse },
+//}
+
+editFieldsSpecifier["users"] = {
+  username: { type: "disable", policy: alwaysTrue },
+};
+editFieldsSpecifier["datasets"] = {  
+  name: { type: "disable", policy: alwaysTrue },
+};
+editFieldsSpecifier["models"] = {
+  name: { type: "disable", policy: alwaysTrue },
+};
+editFieldsSpecifier["algorithms"] = {
+  name: { type: "disable", policy: alwaysTrue },
 };
 
 //dictionary to select the way to post entity/ies, it's an array which can contain "form", "file", or both

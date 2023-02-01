@@ -64,6 +64,7 @@ export default function ContentTable(props) {
                                 action="edit"
                                 k={index + "_edit"}
                                 id={row["_id"]}
+                                disabled={row.owner&&localStorage.getItem("user-role")!=="admin"&&row.owner!=localStorage.getItem("userId")}
                                 //takeSingle={props.takeSingle}
                               />
                             ) : (
@@ -95,6 +96,7 @@ export default function ContentTable(props) {
                                 k={index + "_delete"}
                                 id={row["_id"]}
                                 removeSingle={props.removeSingle}
+                                disabled={row.owner&&localStorage.getItem("user-role")!=="admin"&&row.owner!=localStorage.getItem("userId")}
                               />
                             ) : (
                               ""
@@ -107,6 +109,8 @@ export default function ContentTable(props) {
                                 idResource={props.idResource}
                                 id={row["ordinal"]}
                                 removeSingle={props.removeSingle}
+                                disabled={props.isNotMine}  
+                                                              
                               />
                             ) : (
                               ""
@@ -114,7 +118,7 @@ export default function ContentTable(props) {
                           </td>
                         );
                       }
-                      if (row[e] === undefined) return;
+                      if (row[e] === undefined) return (<td>--undefined--</td>);
                       if (Array.isArray(row[e])) {
                         if (
                           row[e][0] !== undefined &&

@@ -31,6 +31,8 @@ import { layout } from "./config";
 import AddMeasurementsPage from "./components/addMeasurementsPage/addMeasurementsPage";
 import cloneDeep from "clone-deep";
 import { SetAPIUrl } from "./services/http_operations";
+import PasswordRecoveryPage from "./components/passwordRecoveryPage/PasswordRecoveryPage";
+import PasswordResetPage from "./components/PasswordResetPage/PasswordResetPage";
 /*
     notifications follow this schema
 
@@ -100,13 +102,20 @@ function App() {
     });
   }
 
+  //function to push a new notification at the beginning of the list
+  function RemoveData(key: string) {
+    setData((prev) => {
+      return { ...prev, [key]: undefined };
+    });
+  }
+
   //use effect to fetch static data from the server /types
   useEffect(() => {
     // declare the async data fetching function
     const fetchTypes = async () => {
       // get the data from the api
       try {
-        const response = await get_generic("types", {}, {},"");
+        const response = await get_generic("types", {}, {}, "");
 
         setTypes(response.response.data);
       } catch (error) {
@@ -129,6 +138,7 @@ function App() {
     types: types,
     data: data,
     UpdateData: UpdateData,
+    RemoveData: RemoveData,
   };
   ///////////////END FETCHED TYPES MANAGEMENT FRAGMENT
 
@@ -146,6 +156,11 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<AuthPage />} />
+            <Route
+              path="/passwordrecovery"
+              element={<PasswordRecoveryPage />}
+            />
+            <Route path="/passwordreset" element={<PasswordResetPage />} />
             <Route
               path="/add/tenants"
               element={<AddPage resource={"tenants"} />}

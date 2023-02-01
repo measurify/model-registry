@@ -223,7 +223,7 @@ export default function Navigation() {
             )}
           </div>
 
-          <div className="app-nav-text">{locale().tools}</div>
+          <div className="app-nav-text">{locale().resources}</div>
           <hr />
           {Object.keys(pages).map((k) => {
             //check if user can access to the page

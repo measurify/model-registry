@@ -7,7 +7,8 @@ import {
   faEye,
   faPencilAlt,
   faCopy,
-  faCodeBranch,faDownload
+  faCodeBranch,
+  faDownload,
 } from "@fortawesome/fontawesome-free-solid";
 import {
   Button,
@@ -19,7 +20,7 @@ import {
 
 import { delete_generic, delete_version } from "../../services/http_operations";
 
-fontawesome.library.add(faEye, faPencilAlt, faCopy, faCodeBranch,faDownload);
+fontawesome.library.add(faEye, faPencilAlt, faCopy, faCodeBranch, faDownload);
 
 function ActionContent(props) {
   const toShow = {};
@@ -72,7 +73,8 @@ function UnrollView(item) {
                               <Accordion>
                                 <Accordion.Item eventKey="0">
                                   <Accordion.Header>
-                                    {key==="datasets"?single.name: key} {key!=="datasets"?<i>[{i}]</i>:""}
+                                    {key === "datasets" ? single.name : key}{" "}
+                                    {key !== "datasets" ? <i>[{i}]</i> : ""}
                                   </Accordion.Header>
                                   <Accordion.Body>
                                     {UnrollView(single)}
@@ -207,43 +209,46 @@ export default function ActionManager(props) {
   }
   if (props.action === "downloadVersion") {
     return (
-        <Button
-          variant="link"
-          size="sm"
-          onClick={() => {
-            setRes(props.downloadSingle(props.id));
+      <Button
+        variant="link"
+        size="sm"
+        onClick={() => {
+          setRes(props.downloadSingle(props.id));
+        }}
+      >
+        <i
+          className="fa fa-download"
+          aria-hidden="true"
+          title="Download"
+          style={{
+            width: 25 + "px",
+            height: 25 + "px",
+            marginRight: 10 + "px",
+            opacity: 0.85,
           }}
-        >
-          <i
-            className="fa fa-download"
-            aria-hidden="true"
-            title="Download"
-            style={{
-              width: 25 + "px",
-              height: 25 + "px",
-              marginRight: 10 + "px",
-              opacity: 0.85,
-            }}
-          ></i>
-        </Button>
+        ></i>
+      </Button>
     );
   }
   if (props.action === "delete") {
     return (
       <Button
-        variant="link"
+        variant={props.disabled ? "outline-secondary" : "link"}
         size="sm"
+        style={{ backgroundColor: "transparent", border: 0 + "px" }}
         onClick={async () => {
-          const result = window.confirm("Want to delete: " + props.id + "?");
-          if (result) {
-            try {
-              const response = await delete_generic(props.resType, props.id);
+          if (!props.disabled) {
+            const result = window.confirm("Want to delete: " + props.id + "?");
+            if (result) {
+              try {
+                const response = await delete_generic(props.resType, props.id);
 
-              if (response.response.status === 200) {
-                props.removeSingle(props.id);
+                if (response.response.status === 200) {
+                  props.removeSingle(props.id);
+                }
+              } catch (error) {
+                console.log(error);
               }
-            } catch (error) {
-              console.log(error);
             }
           }
         }}
@@ -251,7 +256,11 @@ export default function ActionManager(props) {
         <i
           className="fa fa-times"
           aria-hidden="true"
-          title="Delete"
+          title={
+            props.disabled
+              ? "You cannot delete resources that are not yours"
+              : "Delete"
+          }
           style={{
             width: 30 + "px",
             height: 30 + "px",
@@ -265,23 +274,26 @@ export default function ActionManager(props) {
   if (props.action === "deleteVersion") {
     return (
       <Button
-        variant="link"
+        variant={props.disabled ? "outline-secondary" : "link"}
         size="sm"
+        style={{ backgroundColor: "transparent", border: 0 + "px" }}
         onClick={async () => {
-          const result = window.confirm("Want to delete: " + props.id + "?");
-          if (result) {
-            try {
-              const response = await delete_version(
-                props.resType,
-                props.idResource,
-                props.id
-              );
+          if (!props.disabled) {
+            const result = window.confirm("Want to delete: " + props.id + "?");
+            if (result) {
+              try {
+                const response = await delete_version(
+                  props.resType,
+                  props.idResource,
+                  props.id
+                );
 
-              if (response.response.status === 200) {
-                props.removeSingle(props.id);
+                if (response.response.status === 200) {
+                  props.removeSingle(props.id);
+                }
+              } catch (error) {
+                console.log(error);
               }
-            } catch (error) {
-              console.log(error);
             }
           }
         }}
@@ -289,25 +301,39 @@ export default function ActionManager(props) {
         <i
           className="fa fa-times"
           aria-hidden="true"
-          title="Delete"
+          title={
+            props.disabled
+              ? "You cannot delete versions of a resource that is not yours"
+              : "Delete"
+          }
           style={{
             width: 30 + "px",
             height: 30 + "px",
             marginRight: 10 + "px",
-            opacity: 0.85,            
+            opacity: 0.85,
           }}
         ></i>
       </Button>
-    ) ;
-  }   
+    );
+  }
   if (props.action === "edit") {
     return (
-      <NavLink to={`/edit/` + props.resType + "/" + props.id}>
-        <Button variant="link" size="sm">
+      <NavLink
+        to={props.disabled ? "" : `/edit/` + props.resType + "/" + props.id}
+      >
+        <Button
+          variant={props.disabled ? "outline-secondary" : "link"}
+          size="sm"
+          style={{ backgroundColor: "transparent", border: 0 + "px" }}
+        >
           <i
             className="fa fa-pencil-alt"
             aria-hidden="true"
-            title="Edit"
+            title={
+              props.disabled
+                ? "You cannot edit resources that are not yours"
+                : "Edit"
+            }
             style={{
               width: 30 + "px",
               height: 30 + "px",

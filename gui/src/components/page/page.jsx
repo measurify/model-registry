@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { pages, pageActions, addFields } from "../../config";
@@ -6,6 +6,7 @@ import { get_generic } from "../../services/http_operations";
 import ContentTable from "../contentTable/contentTable";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Pagination } from "react-bootstrap";
+import AppContext from "../../context";
 import "./page.scss";
 
 import fontawesome from "@fortawesome/fontawesome";
@@ -29,6 +30,11 @@ export default function Page(params) {
   const [nextPage, setNextPage] = useState();
 
   const [totalPages, setTotalPages] = useState();
+
+  const context = useContext(AppContext);
+  let myFetched;
+  if (context !== undefined) myFetched = context.fetched;
+  else myFetched = {};
 
   useEffect(() => {
     // declare the async data fetching function
@@ -87,6 +93,7 @@ export default function Page(params) {
     let tmp = resource.filter((el) => {
       return el._id !== id;
     });
+    myFetched.RemoveData(page);
     setResource(tmp);
   };
 

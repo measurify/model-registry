@@ -14,19 +14,20 @@ const instance = axios.create({
 });
 
 export let notificationManager = {
-  PushNotification: (obj) => { },
-  RemoveNotification: (id) => { },
-  ClearNotifications: () => { },
+  PushNotification: (obj) => {},
+  RemoveNotification: (id) => {},
+  ClearNotifications: () => {},
 };
 
 //set APIs url according to configuration or GUI host
 export function SetAPIUrl() {
-  console.log(window.location.origin)
+  console.log(window.location.origin);
   api_url =
-    base_api_url !== undefined ? base_api_url :
-      (window.location.origin.includes("localhost") ? window.location.origin.slice(
-        0, window.location.origin.indexOf(":", 8)).replace("http:", "https:")
-        : window.location.origin) + "/v1";
+    base_api_url !== undefined
+      ? base_api_url
+      : (window.location.origin.includes("localhost")
+          ? "https://localhost"
+          : window.location.origin) + "/v1";
 }
 
 //login
@@ -56,7 +57,9 @@ export function login(username, password, tenant, saveToken = true) {
             response.data.token_expiration_time
           );
           localStorage.setItem("username", response.data.user.username);
+          localStorage.setItem("userId", response.data.user._id);
           localStorage.setItem("user-role", response.data.user.role);
+          localStorage.setItem("user-email", response.data.user.email);
           localStorage.setItem("user-tenant", tenant);
           localStorage.setItem("login-time", new Date().getTime().toString());
         }
@@ -383,7 +386,8 @@ export async function delete_version(
         notificationManager.PushNotification({
           name: "info",
           time: new Date().toTimeString(),
-          msg: "Deleted resource: " + id + ", version of type: " + resource_type,
+          msg:
+            "Deleted resource: " + id + ", version of type: " + resource_type,
         });
         resolve({ response: response }); //true;
       })
@@ -415,7 +419,12 @@ export async function delete_version(
   });
 }
 
-export async function get_generic(resource_type, qs = {}, _options = {}, token) {
+export async function get_generic(
+  resource_type,
+  qs = {},
+  _options = {},
+  token
+) {
   let url = api_url + "/" + resource_type + "/";
   if (token === undefined) token = GetToken();
 
@@ -434,7 +443,8 @@ export async function get_generic(resource_type, qs = {}, _options = {}, token) 
   console.log("GET :" + url);
 
   let options = {
-    ..._options, ...{
+    ..._options,
+    ...{
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": "no-cache",
@@ -442,7 +452,7 @@ export async function get_generic(resource_type, qs = {}, _options = {}, token) 
       },
 
       json: true,
-    }
+    },
   };
   return new Promise((resolve, reject) => {
     instance
@@ -481,4 +491,79 @@ export async function get_generic(resource_type, qs = {}, _options = {}, token) 
 //return the login token from the localstorage
 function GetToken() {
   return localStorage.getItem("token");
+}
+
+//function to request a password reset
+export async function requestPasswordReset(tenant, email) {
+  console.log({ email, tenant });
+
+  const url_string = api_url + "/self/reset?tenant=" + tenant;
+  const body = JSON.stringify({ email: email });
+  console.log("POST password reset request:" + url_string);
+  const options = {
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+    },
+  };
+  return new Promise((resolve, reject) => {
+    instance
+      .post(url_string, body, options)
+      .then((response) => {
+        resolve({ response: response }); //true;
+      })
+      .catch((error) => {
+        reject({ error: error }); //false;
+      });
+  });
+}
+
+//function to reset the password from token
+export async function resetPassword(tenant, token, password) {
+  const url_string = api_url + "/self";
+  console.log("PUT password reset:" + url_string);
+  const body = JSON.stringify({
+    reset: token,
+    password: password,
+    tenant: tenant,
+  });
+  const options = {
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+    },
+  };
+  return new Promise((resolve, reject) => {
+    instance
+      .put(url_string, body, options)
+      .then((response) => {
+        resolve({ response: response }); //true;
+      })
+      .catch((error) => {
+        reject({ error: error }); //false;
+      });
+  });
+}
+
+//get required password strength from the API
+export async function getPasswordStrength() {
+  const url_string = api_url + "/types/passwordStrength";
+  console.log("GET password strength:" + url_string);
+
+  const options = {
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+    },
+  };
+  return new Promise((resolve, reject) => {
+    instance
+      .get(url_string, options)
+      .then((response) => {
+        resolve({ response: response }); //true;
+      })
+      .catch((error) => {
+        reject({ error: error }); //false;
+      });
+  });
 }

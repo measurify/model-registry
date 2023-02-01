@@ -26,7 +26,8 @@ import { versionPages, pageActions, addFields } from "../../config";
 
 import ContentTable from "../contentTable/contentTable";
 
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
+import locale from "../../common/locale";
 
 const cloneDeep = require("clone-deep");
 
@@ -55,9 +56,13 @@ export default function VersioningPage(props) {
   const [disabledFields, setDisabledFields] = useState(undefined);
   //const [mounted, setMounted] = useState(false);
 
+  //check if is my resource
+  const [isNotMine, setIsNotMine] = useState(true);
+
   const context = useContext(AppContext);
   const myFetched = context.fetched;
   /////////////FETCH REQUIRED RESOURCES
+  /*
   const fetchData = async (res) => {
     if (myFetched.data[res] !== undefined) return;
     // get the data from the api
@@ -76,7 +81,7 @@ export default function VersioningPage(props) {
       Object.values(fetchedPageData[resource]).forEach((e) => fetchData(e));
     }
   }, []);
-
+*/
   //useeffect to get resource if required
   useEffect(() => {
     const fetchData = async (qs = {}) => {
@@ -96,6 +101,8 @@ export default function VersioningPage(props) {
       setHeader(headerVersion);
       setResourceElement(response.docs[0].versions);
       setResourceEntity(response.docs[0]);
+      setIsNotMine(localStorage.getItem("user-role")!=="admin"&&response.docs[0].owner &&
+        localStorage.getItem("userId") !=response.docs[0].owner);
       if (pageActions[resource + "Version"] !== undefined)
         setActions(pageActions[resource + "Version"]);
 
@@ -198,11 +205,6 @@ export default function VersioningPage(props) {
     setValues(tmpVals);
   };
 
-  const back = (e) => {
-    e.preventDefault();
-    navigate(-1);
-  };
-
   const handleDeleteItemArray = (path) => {
     let val = cloneDeep(values);
     let tmpPtr = val;
@@ -249,6 +251,11 @@ export default function VersioningPage(props) {
     }
 
     setValues(val);
+  };
+
+  const back = (e) => {
+    e.preventDefault();
+    navigate("/" + resource);
   };
 
   const submit = async (e) => {
@@ -354,21 +361,24 @@ export default function VersioningPage(props) {
 
   const downloadSingle = async (identifier) => {
     try {
-      const route=resource+"/"+id+"/versions/"+identifier;
-      const resp = await get_generic(route,{},{responseType: 'arraybuffer'});
+      const route = resource + "/" + id + "/versions/" + identifier;
+      const resp = await get_generic(
+        route,
+        {},
+        { responseType: "arraybuffer" }
+      );
       //console.log(JSON.stringify(resp.response.data))
       //console.log(resp)
       //console.log(resp.response.data)
-      
-      const filename=resourceElement.find((r) => r.ordinal === identifier).original;
-      const mimetype=resourceElement.find((r) => r.ordinal === identifier).mimetype;      
-      const blob = new Blob([
-        resp.response.data
-      ],{type: mimetype});
-      saveAs(
-        blob,
-        filename
-      );
+
+      const filename = resourceElement.find(
+        (r) => r.ordinal === identifier
+      ).original;
+      const mimetype = resourceElement.find(
+        (r) => r.ordinal === identifier
+      ).mimetype;
+      const blob = new Blob([resp.response.data], { type: mimetype });
+      saveAs(blob, filename);
       //res = resp.response;
       //setMsg(res.statusText);
     } catch (error) {
@@ -382,21 +392,29 @@ export default function VersioningPage(props) {
           error.error.response.data.details
       );
     }
-  };  
-
+  };
   return (
     <div className="page">
       <header className="page-header">
-      Version of&nbsp;{resource.slice(0,-1)}&nbsp;{resourceEntity.name!==undefined?<b>{resourceEntity.name}</b>:""}&nbsp;(id:&nbsp;{id})
-
+        Version of&nbsp;{resource.slice(0, -1)}&nbsp;
+        {resourceEntity.name !== undefined ? <b>{resourceEntity.name}</b> : ""}
+        &nbsp;(id:&nbsp;{id})
         {addFields["versions"] !== undefined && (
-          <NavLink to={`/add/versions/` + resource + "/" + id} key={resource + "_versions_add_navlink"}>
-            <Button variant="link" size="sm" key={resource + "button"}>
+          <NavLink
+            to={isNotMine?"":`/add/versions/` + resource + "/" + id}
+            key={resource + "_versions_add_navlink"}
+          >
+            <Button
+              variant={isNotMine ? "outline-secondary" : "link"}
+              size="sm"
+              style={{ backgroundColor: "transparent", border: 0 + "px" }}
+              key={resource + "button"}
+              title={isNotMine? "You cannot add versions to resources that are not yours": "Add"}
+            >
               <i
                 key={resource + "icon"}
                 className="fa fa-plus-circle"
-                aria-hidden="true"
-                title={"Add"}
+                aria-hidden="true"                
                 style={{
                   width: 30 + "px",
                   height: 30 + "px",
@@ -409,6 +427,11 @@ export default function VersioningPage(props) {
         )}
       </header>
       <main className="page-content">
+        <div style={{ paddingBottom: 10 + "px" }}>
+          <Button variant="outline-primary" onClick={back}>
+            Back to {resource}
+          </Button>
+        </div>
         <ContentTable
           resType={resource}
           header={header}
@@ -418,6 +441,7 @@ export default function VersioningPage(props) {
           removeSingle={removeSingle}
           downloadSingle={downloadSingle}
           idResource={id}
+          isNotMine={isNotMine}
         />
         {
           //<RenderPagination />

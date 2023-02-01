@@ -4,11 +4,13 @@ const cloneDeep = require("clone-deep");
 
 // this function sort keys of an object and of its array-of-objects values (recursively) based on a template
 export function sortObject(obj, template) {
-  //keys of the object to sort
-  let keys = Object.keys(obj);
   //sorted array of keys
   const sortingKeys = Object.keys(template);
-  //remove uncommon keys between the two arrays from the key array
+  //add to the obj default values of empty fields
+  sortingKeys.forEach((key)=> {if(obj[key]===undefined)obj[key]=template[key]})
+  //keys of the object to sort  
+  let keys = Object.keys(obj);
+  //remove uncommon keys between the two arrays from the key array  
   keys = keys.filter((ob) => {
     return sortingKeys.indexOf(ob) !== -1;
   });

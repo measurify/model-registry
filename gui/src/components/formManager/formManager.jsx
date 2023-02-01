@@ -107,7 +107,7 @@ export const FormManager = (props) => {
         <Col sm={4}>
           <Form.Group className="mb-3">
             <Form.Control
-              type={key === "password" ? "password" : "text"}
+              type={key === "password" ? "password" :(key === "email"?"email": "text")}
               id={key}
               onChange={(e) => {
                 e.preventDefault();
@@ -237,7 +237,7 @@ export const FormManager = (props) => {
               <option>{locale().select + " " + key}</option>
               {React.Children.toArray(
                 Object.entries(val).map(([k, v]) => {
-                  return <option value={k}>{v}</option>;
+                  return <option value={v}>{v}</option>;
                 })
               )}
             </Form.Select>
@@ -311,7 +311,7 @@ export const FormManager = (props) => {
     if (myFetched !== {} && myFetched.data[key] !== undefined) {
       options = myFetched.data[key];
     }
-    const allowedVal =options !==undefined? options.map((e) => e._id): [];
+    const allowedVal = options !== undefined ? options.map((e) => e._id) : [];
     return (
       <Row
         style={{
@@ -369,16 +369,34 @@ export const FormManager = (props) => {
                       {myFetched.data[key] !== undefined &&
                       options !== undefined ? (
                         <Autocomplete
-                          freeSolo={key === "tags" ? true : false}
+                          //freeSolo={key === "tags" ? true : false}
                           disableClearable
                           disabled={
                             props.disabledFields[key] !== undefined
                               ? props.disabledFields[key]
                               : false
                           }
-                          id={key}
+                          onBlur={(e) => {
+                            if (
+                              e.target.value === "" ||
+                              (key !== "tags" &&
+                                key !== "users" && key !== "datasets"&&
+                                !allowedVal.includes(e.target.value)) ||
+                              (key === "users" &&
+                                !myFetched.data.users
+                                  .map((value) => value.optionalLabel)
+                                  .includes(e.target.value)) ||
+                              (key === "datasets" &&
+                                !myFetched.data.datasets
+                                  .map((value) => value.optionalLabel)
+                                  .includes(e.target.value))
+                            ) {                              
+                              e.preventDefault();
+                              props.arrayDeleteCallback([key, index]);
+                            }
+                          }}
                           onInputChange={(e) => {
-                            if(e===null)return;
+                            if (e === null) return;
                             e.preventDefault();
                             if (e.target.value === 0) return;
                             props.handleChangesCallback(e.target.value, [
@@ -407,7 +425,9 @@ export const FormManager = (props) => {
                           getOptionLabel={(option) => {
                             return option.optionalLabel !== undefined
                               ? option.optionalLabel
-                              :( option._id !==undefined ? option._id : option);
+                              : option._id !== undefined
+                              ? option._id
+                              : option;
                           }}
                           renderOption={(props, option) => (
                             <Box

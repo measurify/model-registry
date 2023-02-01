@@ -173,7 +173,11 @@ export default function AddPage(props) {
     setValues(val);
   };
   //handle way selector to post new entity
-  const handleTypeSelect = (eventKey) => {setIsError(false);setMsg("");setPostType(eventKey)};
+  const handleTypeSelect = (eventKey) => {
+    setIsError(false);
+    setMsg("");
+    setPostType(eventKey);
+  };
 
   const back = (e) => {
     e.preventDefault();
@@ -198,17 +202,18 @@ export default function AddPage(props) {
     const missingValues = [];
 
     // key[0] is usually the _id or username or name, so it shouldn't be undefined
-    // may be unstable 
+    // may be unstable
     if (tmpValues[k[0]] === "") {
       missingValues.push(k[0]);
     }
-
+    console.log({ tmpValues, k });
     //check if enums fetched from server are not empty
     k.forEach((key) => {
       if (
-        fetchedPageTypes[resource] !== undefined &&
-        fetchedPageTypes[resource][key] !== undefined &&
-        tmpValues[key] === ""
+        (fetchedPageTypes[resource] !== undefined &&
+          fetchedPageTypes[resource][key] !== undefined &&
+          (tmpValues[key] === "" || tmpValues[key] === "Select " + key)) ||
+        ((key === "email" || key === "password") && tmpValues[key] === "")
       ) {
         missingValues.push(key);
       }
@@ -242,6 +247,8 @@ export default function AddPage(props) {
     }
 
     if (res.status === 200) {
+      myFetched.RemoveData(resource);
+
       if (window.confirm("Back to resource page?") === true) {
         if (resource === "tenants") navigate("/");
         else navigate("/" + resource);

@@ -22,7 +22,7 @@
     //-webkit-backdrop-filter: blur(2px);
     //backdrop-filter: blur(2px);
     width: 35vw;
-    height: 25vh;
+    height: 35vh;
     min-width: 200px;
     min-height: 150px;
     padding-top: 3%;
@@ -36,7 +36,7 @@
 
   .title-section {
     //align-self: center;
-    font-size: max(2vw, 20px);
+    font-size: max(2.6vw, 22px);
     font-style: normal;
     font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
     font-stretch: ultra-expanded;
@@ -48,7 +48,19 @@
   }
   .subtitle-section {
     //align-self: center;
-    font-size: max(0.6vw, 16px);
+    font-size: max(1.2vw, 18px);
+    font-style: italic;
+    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+    font-stretch: ultra-condensed;
+    color: #123651;
+    display: flex;
+    //justify-content: space-between;
+    align-items: center;
+    //text-transform: uppercase;
+  }
+  .poweredtitle-section {
+    //align-self: center;
+    font-size: max(0.8vw, 16px);
     font-style: italic;
     font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
     font-stretch: ultra-condensed;
