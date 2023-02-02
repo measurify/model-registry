@@ -4,7 +4,7 @@ const errors = require('../commons/errors.js');
 
 exports.getResource = async function (req, res, field, model, select) {
     try {
-        if (req.query && req.query.select) select = prepareSelect(select, query.select);
+        if (req.query && req.query.select) select = prepareSelect(select, req.query.select);
         const item = await persistence.get(req.params.id, field, model, select);
         if (!item) return errors.manage(res, errors.resource_not_found, req.params.id);
         return res.status(200).json(item);
