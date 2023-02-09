@@ -11,7 +11,7 @@ services:
       - database
     volumes:
         - ./resources:/resources   
-        - ./uploads:/uploads
+        - /uploads:./uploads
   database:
     image: mongo
     volumes:
