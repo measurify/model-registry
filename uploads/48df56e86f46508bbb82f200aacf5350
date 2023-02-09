@@ -1,0 +1,374 @@
+experiment = {
+    "state": 1,
+    "tags": [],
+    "visibility": "private",
+    "_id": "experiment id",
+    "description": "experiment description",
+    "startDate": "2022-05-30T07:15:17.396Z",
+    "endDate": "2022-09-15T18:15:17.396Z",
+    "protocol": "protocol name",
+    "metadata": [
+        {
+            "name": "metadata-name-1",
+            "value": 10
+        },
+        {
+            "name": "metadata-name-2",
+            "value": "value 2"
+        },
+        {
+            "name": "metadata-name-3",
+            "value": 55
+        },
+        {
+            "name": "metadata-name-4",
+            "value": [
+                34,
+                25,
+                45
+            ]
+        }
+    ],
+    "history": [
+        {
+            "step": 1,
+            "timestamp": "2022-09-15T18:15:17.396Z",
+            "fields": [
+                {
+                    "name": "field-1",
+                    "value": 55
+                },
+                {
+                    "name": "field-2",
+                    "value": "text value"
+                },
+                {
+                    "name": "field-3",
+                    "value": [
+                        21,
+                        32,
+                        432
+                    ]
+                },
+                {
+                    "name": "field-4",
+                    "value": 13
+                },
+                {
+                    "name": "field-5",
+                    "value": "another text value"
+                },
+                {
+                    "name": "field-6",
+                    "value": [
+                        324,
+                        432,
+                        432
+                    ]
+                }
+            ]
+        },
+        {
+            "step": 2,
+            "timestamp": "2022-12-15T18:15:17.396Z",
+            "fields": [
+                {
+                    "name": "field-1",
+                    "value": 65
+                },
+                {
+                    "name": "field-2",
+                    "value": "text value 2"
+                },
+                {
+                    "name": "field-3",
+                    "value": [
+                        3.5,
+                        56
+                    ]
+                },
+                {
+                    "name": "field-4",
+                    "value": 33.5
+                },
+                {
+                    "name": "field-5",
+                    "value": "another text value 2"
+                },
+                {
+                    "name": "field-6",
+                    "value": [
+                        543.5,
+                        534,
+                        5656
+                    ]
+                }
+            ]
+        },
+        {
+            "step": 3,
+            "timestamp": "2022-09-15T18:15:17.396Z",
+            "fields": [
+                {
+                    "name": "field-1",
+                    "value": 56.5
+                },
+                {
+                    "name": "field-2",
+                    "value": "text value"
+                },
+                {
+                    "name": "field-3",
+                    "value": [
+                        21,
+                        32,
+                        432
+                    ]
+                },
+                {
+                    "name": "field-4",
+                    "value": 13
+                },
+                {
+                    "name": "field-5",
+                    "value": "another text value"
+                },
+                {
+                    "name": "field-6",
+                    "value": [
+                        324,
+                        432,
+                        432.5
+                    ]
+                }
+            ]
+        }
+    ],
+    "place": []
+}
+protocol = {
+    "tags": [],
+    "visibility": "public",
+    "_id": "protocol name",
+    "description": "protocol description",
+    "metadata": [
+        {
+            "type": "scalar",
+            "range": [],
+            "name": "metadata-name-1",
+            "description": "description metadata 1"
+        },
+        {
+            "type": "text",
+            "range": [],
+            "name": "metadata-name-2",
+            "description": "description metadata 2"
+        },
+        {
+            "type": "scalar",
+            "range": [],
+            "name": "metadata-name-3",
+            "description": "description metadata 3"
+        },
+        {
+            "type": "vector",
+            "range": [],
+            "name": "metadata-name-4",
+            "description": "description metadata 4"
+        }
+    ],
+    "topics": [
+        {
+            "name": "topic name 1",
+            "description": "topic description 1",
+            "fields": [
+                {
+                    "type": "scalar",
+                    "range": [],
+                    "name": "field-1",
+                    "description": "field description 1"
+                },
+                {
+                    "type": "text",
+                    "range": [],
+                    "name": "field-2",
+                    "description": "field description 2"
+                },
+                {
+                    "type": "vector",
+                    "range": [],
+                    "name": "field-3",
+                    "description": "field description 3"
+                }
+            ]
+        },
+        {
+            "name": "topic name 2",
+            "description": "topic description 2",
+            "fields": [
+                {
+                    "type": "scalar",
+                    "range": [],
+                    "name": "field-4",
+                    "description": "field description 4"
+                },
+                {
+                    "type": "text",
+                    "range": [],
+                    "name": "field-5",
+                    "description": "field description 5"
+                },
+                {
+                    "type": "vector",
+                    "range": [],
+                    "name": "field-6",
+                    "description": "field description 6"
+                }
+            ]
+        }
+    ]
+}
+query = undefined;
+
+
+const solution = {
+    "_id": experiment._id,
+    "history": experiment.history.map(hist => ({
+        "step": hist.step,
+        "groups": protocol.topics.map(topic => ({
+            [topic.name]: {
+                "values": hist.fields.filter(field => topic.fields.some(f => f.name === field.name))
+                    .reduce((acc, field) => [...acc, { [field.name]: field.value }], []),
+
+                "description": topic.description,
+                "unit": topic.fields.reduce((acc, field) => [...acc, { [field.name]: field.type }], [])
+            },
+        }))
+    }))
+};
+
+console.log(solution)
+console.log("a")
+
+
+/*
+let topicTemplate = {}
+protocol.topics.forEach(element => {
+    topicTemplate[element.name] = { description: element.description };//create a template to load all data step by step
+    topicTemplate[element.name].values = element.fields.map(el => { return { [el.name]: null } });//add group:field values to null
+    topicTemplate[element.name].types = element.fields.map(el => { return { [el.name]: el.type } });//add group:types from protocol
+})
+let history = null;
+//console.log(topicTemplate)
+
+console.log(experiment.history)
+let test = experiment.history.map(step => step.fields.map(({ name, value }) => ({ [name]: value })))
+
+history = experiment.history.map(stepEl => {
+    return {
+        step: stepEl.step,
+        // values: topicTemplate.values.map(obj => {
+            // const fields = Object.keys(obj);
+           //  return { [fields[0]]: stepEl.fields.filter(el => el.name === fields[0])[0].value }
+         //}),
+        groups: topicTemplate.map(group => { group.values.map() })
+    };
+})
+console.log(history)
+
+
+console.log("a")
+
+*/
+
+
+/*
+experiment = {
+    "_id": "experiment id",
+    "history": [
+        {
+            "step": 1,
+            "fields": [
+                {
+                    "name": "field-1",
+                    "value": 55
+                },
+                {
+                    "name": "field-2",
+                    "value": 40
+                }
+            ]
+        },
+        {
+            "step": 2,
+            "fields": [
+                {
+                    "name": "field-1",
+                    "value": 65
+                },
+                {
+                    "name": "field-2",
+                    "value": 30
+                }
+            ]
+        }
+    ]
+}
+protocol = {
+    "_id": "protocol name",
+    "topics": [
+        {
+            "name": "topic1",
+            "description": "topic description 1",
+            "fields": [
+                {
+                    "type": "scalar",
+                    "name": "field-1"
+                }
+            ]
+        },
+        {
+            "name": "topic2",
+            "description": "topic description 2",
+            "fields": [
+                {
+                    "type": "scalar",
+                    "name": "field-2"
+                }
+            ]
+        }
+    ]
+}
+
+let solution = {
+    "_id": "experiment id",
+    "history": [{
+        "step": 1,
+        "groups": [
+            {
+                "topic1": { "values": [{ "field-1": 55 }] },
+                "description": "topic description 1",
+                "unit": [{ "field-1": "scalar" }]
+            },
+            {
+                "topic2": { "values": [{ "field-2": 40 }] },
+                "description": "",
+                "unit": [{ "field-2": "scalar" }]
+            }
+        ]
+    },
+    {
+        "groups": [
+            {
+                "topic1": { "values": [{ "field-1": 65 }] },
+                "description": "topic description 1",
+                "unit": [{ "field-1": "scalar" }]
+            },
+            {
+                "topic2": { "values": [{ "field-2": 30 }] },
+                "description": "",
+                "unit": [{ "field-2": "scalar" }]
+            }
+        ]
+    }]
+}*/
