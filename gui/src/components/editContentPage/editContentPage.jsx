@@ -167,7 +167,7 @@ export default function EditContentPage(props) {
     };
 
     const fst = { _id: id };
-    const qs = { filter: JSON.stringify(fst) };
+    const qs = { filter: JSON.stringify(fst), select:["_id","name","username"] };
     fetchData(qs);
   }, []);
 

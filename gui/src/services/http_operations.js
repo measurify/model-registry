@@ -14,9 +14,9 @@ const instance = axios.create({
 });
 
 export let notificationManager = {
-  PushNotification: (obj) => {},
-  RemoveNotification: (id) => {},
-  ClearNotifications: () => {},
+  PushNotification: (obj) => { },
+  RemoveNotification: (id) => { },
+  ClearNotifications: () => { },
 };
 
 //set APIs url according to configuration or GUI host
@@ -26,8 +26,8 @@ export function SetAPIUrl() {
     base_api_url !== undefined
       ? base_api_url
       : (window.location.origin.includes("localhost")
-          ? "https://localhost"
-          : window.location.origin) + "/v1";
+        ? "https://localhost"
+        : window.location.origin) + "/v1";
 }
 
 //login
@@ -438,6 +438,9 @@ export async function get_generic(
   }
   if (qs.page !== undefined) {
     url = url.concat("&page=" + qs.page);
+  }
+  if (qs.select !== undefined && qs.length !== 0) {
+    url = url.concat('&select=["' + qs.select.join('","') + '"]'); 
   }
 
   console.log("GET :" + url);

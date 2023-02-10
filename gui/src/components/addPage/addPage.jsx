@@ -124,7 +124,7 @@ export default function AddPage(props) {
     if (searchParams.get("from") === null || searchParams.get("from") === "")
       return;
     const fst = { _id: searchParams.get("from") };
-    const qs = { filter: JSON.stringify(fst) };
+    const qs = { filter: JSON.stringify(fst), select:["_id","name","username"] };
     fetchData(qs);
   }, [searchParams, resource]);
 
@@ -248,12 +248,8 @@ export default function AddPage(props) {
 
     if (res.status === 200) {
       myFetched.RemoveData(resource);
-
-      if (window.confirm("Back to resource page?") === true) {
-        if (resource === "tenants") navigate("/");
-        else navigate("/" + resource);
-      } else {
-      }
+      window.alert(resource+" uploaded successfully");
+      navigate("/" + resource);      
     }
   };
 
