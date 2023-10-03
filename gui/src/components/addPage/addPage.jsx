@@ -124,7 +124,10 @@ export default function AddPage(props) {
     if (searchParams.get("from") === null || searchParams.get("from") === "")
       return;
     const fst = { _id: searchParams.get("from") };
-    const qs = { filter: JSON.stringify(fst), select:["_id","name","username"] };
+    const qs = {
+      filter: JSON.stringify(fst),
+      select: ["_id", "name", "username"],
+    };
     fetchData(qs);
   }, [searchParams, resource]);
 
@@ -206,7 +209,6 @@ export default function AddPage(props) {
     if (tmpValues[k[0]] === "") {
       missingValues.push(k[0]);
     }
-    console.log({ tmpValues, k });
     //check if enums fetched from server are not empty
     k.forEach((key) => {
       if (
@@ -248,8 +250,8 @@ export default function AddPage(props) {
 
     if (res.status === 200) {
       myFetched.RemoveData(resource);
-      window.alert(resource+" uploaded successfully");
-      navigate("/" + resource);      
+      window.alert(resource + " uploaded successfully");
+      navigate("/" + resource);
     }
   };
 

@@ -239,7 +239,7 @@ export default function AddMeasurementsPage(props) {
     //deep clone formValues
     let token = undefined;
     let body = cloneDeep(formValues);
-    console.log(samples);
+
     let tmpSamples = samples.map((sample) => {
       return { values: sample.values.map((v) => v.value) };
     });

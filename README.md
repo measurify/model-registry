@@ -14,8 +14,14 @@ The file registry.postman_collection.json contains examples of calls for the [Po
 Clone code and run the container
 
     git clone https://github.com/measurify/model-registry registry
+
+copy the variables.env (for docker variablesTemplateDocker.env see Deploy):
+    cd registry/init/
+    sudo cp variablesTemplate.env ./variables.env
+
+to start server:
     cd registry
-    docker-compose up -d
+    docker-compose up -d --build
 
 to see logs:
 
@@ -346,7 +352,7 @@ The Model Registry is developed using [Node JS](https://nodejs.org/en/) and [Mon
 [Install Docker](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
 [Install Docker Compose](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-16-04)
 
-There is a configuration file **\init\variable.env**, which can be edited in order to specify several features:
+There is a configuration file **\init\variablesTemplateDocker.env**, which can be edited in order to specify several features:
 
     VERSION=v1
     PROTOCOL=https
@@ -357,7 +363,7 @@ There is a configuration file **\init\variable.env**, which can be edited in ord
     JWT_SECRET=fdshudshfidsuh
     JWT_EXPIRATIONTIME=30
     JWT_RENEW_EXPIRATIONTIME=50m
-    DATABASE=mongodb://localhost:27017/registry-catalog
+    DATABASE=mongodb://127.0.0.1:27017/registry-catalog
     LOG=true
     UPLOAD_PATH=./uploads
     DEFAULT_TENANT=registry-default-tenant
@@ -389,7 +395,7 @@ Use Certbot (modify in order to provide your domain)
 Copy certificates 
 
     sudo cp /etc/letsencrypt/live/{{url}}/fullchain.pem ~/registry/resources/fullchain.pem
-    sudo cp /etc/letsencrypt/live/{{url}}/privkey.pem ~/registry/resources/key.pem
+    sudo cp /etc/letsencrypt/live/{{url}}/privkey.pem ~/registry/resources/privkey.pem
 
 Update certificates
 

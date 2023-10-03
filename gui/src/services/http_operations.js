@@ -1,22 +1,17 @@
 import { base_api_url } from "../config";
+import { GetProgressbarValue, updateProgressbar } from "./progressbar_manager";
 
-const axios = require("axios").default;
+import axios from "axios"; 
 
-const https = require("https");
+export const instance = axios.create({});
 
 export let api_url;
 
-const instance = axios.create({
-  httpsAgent: new https.Agent({
-    //unsafe, delete in prod
-    //rejectUnauthorized: false,
-  }),
-});
 
 export let notificationManager = {
-  PushNotification: (obj) => { },
-  RemoveNotification: (id) => { },
-  ClearNotifications: () => { },
+  PushNotification: (obj) => {},
+  RemoveNotification: (id) => {},
+  ClearNotifications: () => {},
 };
 
 //set APIs url according to configuration or GUI host
@@ -26,8 +21,8 @@ export function SetAPIUrl() {
     base_api_url !== undefined
       ? base_api_url
       : (window.location.origin.includes("localhost")
-        ? "https://localhost"
-        : window.location.origin) + "/v1";
+          ? "https://localhost"
+          : window.location.origin) + "/v1";
 }
 
 //login
@@ -440,7 +435,7 @@ export async function get_generic(
     url = url.concat("&page=" + qs.page);
   }
   if (qs.select !== undefined && qs.length !== 0) {
-    url = url.concat('&select=["' + qs.select.join('","') + '"]'); 
+    url = url.concat('&select=["' + qs.select.join('","') + '"]');
   }
 
   console.log("GET :" + url);
@@ -567,6 +562,109 @@ export async function getPasswordStrength() {
       })
       .catch((error) => {
         reject({ error: error }); //false;
+      });
+  });
+}
+
+/////////////////////////////////////////
+////TEST
+
+export async function DownloadToTarget(route, filename, setNow) {
+  const newHandle = await window.showSaveFilePicker({
+    suggestedName: filename,
+  });
+  const writableStream = await newHandle.createWritable();
+  return new Promise((resolve, reject) => {
+    fetch(api_url + "/" + route, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+        Authorization: GetToken(),
+      },
+    })
+      .then((response) => response.body)
+      .then((rb) => {
+        const reader = rb.getReader();
+
+        new ReadableStream({
+          start(controller) {
+            // The following function handles each data chunk
+            function push() {
+              // "done" is a Boolean and value a "Uint8Array"
+              reader.read().then(async ({ done, value }) => {
+                // If there is no more data to read
+                if (done) {
+                  updateProgressbar(undefined);
+                  setNow(GetProgressbarValue());
+                  await writableStream.close();
+                  controller.close();
+                  return;
+                }
+                // Get the data and send it to the browser via the controller
+                //controller.enqueue(value);
+                // Check chunks by logging to the console
+
+                updateProgressbar(value.length);
+                setNow(GetProgressbarValue());
+                await writableStream.write(value);
+                //console.log(done, value);
+                push();
+              });
+            }
+
+            push();
+          },
+        });
+      });
+  });
+}
+
+export async function DownloadToBlob(route, mimetype, setNow) {
+  let arr = [];
+  let blob;
+  return new Promise((resolve, reject) => {
+    fetch(api_url + "/" + route, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+        Authorization: GetToken(),
+      },
+    })
+      .then((response) => response.body)
+      .then((rb) => {
+        const reader = rb.getReader();
+
+        return new ReadableStream({
+          start(controller) {
+            // The following function handles each data chunk
+            function push() {
+              // "done" is a Boolean and value a "Uint8Array"
+              reader.read().then(async ({ done, value }) => {
+                // If there is no more data to read
+                if (done) {
+                  controller.close();
+                  const uint_arr = new Uint8Array(arr);
+                  updateProgressbar(undefined);
+                  setNow(GetProgressbarValue());
+                  blob = new Blob([uint_arr], { type: mimetype });
+                  resolve(blob);
+                  return;
+                }
+
+                const temp = Array.from(value);
+                arr = arr.concat(temp);
+                updateProgressbar(value.length);
+                setNow(GetProgressbarValue());
+                push();
+              });
+            }
+
+            push();
+            return;
+          },
+        });
       });
   });
 }
