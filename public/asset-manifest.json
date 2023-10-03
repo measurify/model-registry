@@ -1,14 +1,13 @@
 {
   "files": {
     "main.css": "/static/css/main.4504ef46.css",
-    "main.js": "/static/js/main.f286c609.js",
-    "static/media/Hi_Drive_Logo_Claim_rgb.svg": "/static/media/Hi_Drive_Logo_Claim_rgb.e39905c112c3a432b166b63a8c0bf00b.svg",
+    "main.js": "/static/js/main.ebd360b7.js",
     "index.html": "/index.html",
     "main.4504ef46.css.map": "/static/css/main.4504ef46.css.map",
-    "main.f286c609.js.map": "/static/js/main.f286c609.js.map"
+    "main.ebd360b7.js.map": "/static/js/main.ebd360b7.js.map"
   },
   "entrypoints": [
     "static/css/main.4504ef46.css",
-    "static/js/main.f286c609.js"
+    "static/js/main.ebd360b7.js"
   ]
 }
