@@ -1,4 +1,8 @@
 node_modules/
 data/
 uploads/
+gui/node_modules
+gui/build/
 init/variables.env
+resources/fullchain.pem
+resources/privkey.pem
