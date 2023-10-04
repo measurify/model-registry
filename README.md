@@ -16,11 +16,13 @@ Clone code and run the container
     git clone https://github.com/measurify/model-registry registry
 
 copy the variables.env (for docker variablesTemplateDocker.env see Deploy):
-    cd registry/init/
-    sudo cp variablesTemplate.env ./variables.env
 
-to start server:
-    cd registry
+    cd registry/init/
+    sudo cp variablesTemplate.env variables.env
+
+to start server: (inside registry folder)
+
+    cd ..
     docker-compose up -d --build
 
 to see logs:
