@@ -48,6 +48,18 @@ datasetSchema.path('owner').validate({
     }
 });
 
+// validate tags
+datasetSchema.path("tags").validate({
+    validator: async function (values) {
+      const Tag = this.constructor.model("Tag");
+      for (let value of values) {
+        const tag = await Tag.findById(value);
+        if (!tag) throw new Error("Tag not existent (" + value + ")");
+      }
+      return true;
+    },
+});
+
 // validate versions
 datasetSchema.path('versions').validate({
     validator: async function (values) {  

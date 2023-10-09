@@ -40,10 +40,12 @@ exports.put = async (req, res) => {
 
 exports.delete = async (req, res) => {
     const Dataset = mongoose.dbs[req.tenant.database].model('Dataset');
-    const Model = mongoose.dbs[req.tenant.database].model('Model');
+    const Model = mongoose.dbs[req.tenant.database].model('Model');    
+    const Algorithm = mongoose.dbs[req.tenant.database].model('Algorithm');
     let result = await checker.isAvailable(req, res, Dataset); if (result != true) return result;
     result = await checker.canDelete(req, res); if (result != true) return result;
     result = await checker.isNotUsed(req, res, Model, 'datasets'); if (result != true) return result;
+    result = await checker.isNotUsed(req, res, Algorithm, 'datasets'); if (result != true) return result;
     let dataset = await Dataset.findOne( { _id: req.resource.id });    
     dataset.versions.forEach(async (version)=> await filemanager.delete(version.key));
     return await controller.deleteResource(req, res, Dataset);    

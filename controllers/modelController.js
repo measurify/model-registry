@@ -36,7 +36,7 @@ exports.put = async (req, res) => {
     return await controller.updateResource(req, res, fields, Model);
 };   
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res) => {    
     const Model = mongoose.dbs[req.tenant.database].model('Model');
     let result = await checker.isAvailable(req, res, Model); if (result != true) return result;
     result = await checker.canDelete(req, res); if (result != true) return result;
