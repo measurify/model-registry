@@ -128,9 +128,10 @@ export const FormManager = (props) => {
   };
   //fetched data for row component
   const FetchedFormRow = (key, alias) => {
+
     let options;
     if (
-      myFetched !== {} &&
+      Object.keys(myFetched).length !==0 &&
       (myFetched.data[key] !== undefined || myFetched.data[alias] !== undefined)
     ) {
       options = myFetched.data[alias !== undefined ? alias : key];
@@ -308,7 +309,7 @@ export const FormManager = (props) => {
   //strings array form row component
   const ArrayStringFormRow = (key) => {
     let options;
-    if (myFetched !== {} && myFetched.data[key] !== undefined) {
+    if (Object.keys(myFetched).length !==0 && myFetched.data[key] !== undefined) {
       options = myFetched.data[key];
     }
     const allowedVal = options !== undefined ? options.map((e) => e._id) : [];
@@ -421,7 +422,7 @@ export const FormManager = (props) => {
                               ? options.filter((e) => e._id === value)[0]
                               : value
                           }
-                          options={options}
+                          options={options.filter(e=> !props.values[key].includes(e._id) && e.optionalLabel !== "admin"&& e._id!==localStorage.getItem("userId") )}
                           getOptionLabel={(option) => {
                             return option.optionalLabel !== undefined
                               ? option.optionalLabel

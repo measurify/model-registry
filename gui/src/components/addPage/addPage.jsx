@@ -72,16 +72,12 @@ export default function AddPage(props) {
   const [contentPlain, setContentPlain] = useState(null);
 
   const context = useContext(AppContext);
-  let myFetched;
-  if (context !== undefined) myFetched = context.fetched;
-  else myFetched = {};
+  let myFetched = context.fetched;
 
   /////////////FETCH REQUIRED RESOURCES
   const fetchData = async (res) => {
-    if (myFetched.data[res] !== undefined) return;
-    // get the data from the api
     try {
-      const response = await get_generic(res, { limit: 100 });
+      const response = await get_generic(res, { limit: 1000 });
       myFetched.UpdateData(
         response.docs.map((e) => {
           return {
@@ -101,9 +97,7 @@ export default function AddPage(props) {
     }
   };
   useEffect(() => {
-    if (fetchedPageData[resource] !== undefined) {
-      Object.values(fetchedPageData[resource]).forEach((e) => fetchData(e));
-    }
+    Object.values(fetchedPageData[resource]).forEach((e) => fetchData(e));
   }, []);
 
   //useeffect to get resource if required

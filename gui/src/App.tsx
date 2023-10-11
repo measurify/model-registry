@@ -55,6 +55,7 @@ function App() {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [types, setTypes] = useState<Object | undefined>();
   const [data, setData] = useState<Object>({});
+  const [tenants, setTenants] = useState<String[]>([]);
 
   let layoutRef = React.useRef<string | null>();
   const tkn = localStorage.getItem("token");
@@ -123,11 +124,28 @@ function App() {
       }
     };
 
+    const fetchTenants = async () => {
+      try {
+        const response = await get_generic("types/tenants", {}, "");
+        let _tenants = response.docs.map((e: any) => e._id);
+        const tkn = localStorage.getItem("user-tenant");
+        if (tkn !== undefined && _tenants.includes(tkn)) {
+          _tenants = _tenants.filter((item: String) => item !== tkn);
+          _tenants.unshift(tkn);
+        }
+        setTenants(_tenants);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+
     //if types has been already set, ignore it
     if (types !== undefined) return;
     // call the function
     try {
       fetchTypes();
+      fetchTenants();
     } catch (error) {
       console.log(error);
     }
@@ -155,7 +173,7 @@ function App() {
       <div className="app">
         <Router>
           <Routes>
-            <Route path="/" element={<AuthPage />} />
+            <Route path="/" element={<AuthPage tenants={tenants}/>} />
             <Route
               path="/passwordrecovery"
               element={<PasswordRecoveryPage />}

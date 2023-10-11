@@ -176,6 +176,7 @@ export default function VersioningPage(props) {
   const download = async (identifier) => {
     let browser;
     const sizeLimit = 2000000000;
+
     if (
       (navigator.userAgent.indexOf("Opera") ||
         navigator.userAgent.indexOf("OPR")) != -1
@@ -198,6 +199,7 @@ export default function VersioningPage(props) {
     } else {
       browser = "unknown";
     }
+
 
     const picked = resourceElement.find((r) => r.ordinal === identifier);
     const filename = picked.original;
@@ -253,7 +255,7 @@ export default function VersioningPage(props) {
       const route = resource + "/" + id + "/versions/" + identifier;
       setIsError(false);
       setMsg("Downloading " + filename + "...");
-      await DownloadToTarget(route, filename, setNow);
+      const response =await DownloadToTarget(route, filename, setNow);
       setIsError(false);
       setMsg(filename + " downloaded successfully");
     } catch (error) {
@@ -272,9 +274,9 @@ export default function VersioningPage(props) {
   return (
     <div className="page">
       <header className="page-header">
-        Version of&nbsp;{resource.slice(0, -1)}&nbsp;
+        Versions of&nbsp;{resource.slice(0, -1)}&nbsp;
         {resourceEntity.name !== undefined ? <b>{resourceEntity.name}</b> : ""}
-        &nbsp;(id:&nbsp;{id})
+        &nbsp;
         {addFields["versions"] !== undefined && (
           <NavLink
             to={isNotMine ? "" : `/add/versions/` + resource + "/" + id}
@@ -320,7 +322,7 @@ export default function VersioningPage(props) {
         >
           {msg}
         </font>
-        {now !== undefined && <ProgressBar now={now} label={`${now}%`} />}
+        {now !== undefined && <ProgressBar variant={now===100? "success":"primary"} now={now} label={`${now}%`} />}
         <br />
         <ContentTable
           resType={resource}

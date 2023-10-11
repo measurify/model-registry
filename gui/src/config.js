@@ -5,7 +5,10 @@ import { isFeatureInUse, alwaysTrue } from "./services/validations";
 export const base_api_url = undefined;
 
 //name of this dashboard, shown to users
-export const website_name = "ML Registry Dashboard";
+export const website_name =
+  window.location.hostname.includes("registry-test") === true
+    ? "ML Test Registry Dashboard"
+    : "ML Registry Dashboard";
 
 //languages enabled for this GUI, only english "en" and italian "it" are supported with this version
 //if no languages are enabled, the GUI will be localized in english
@@ -21,40 +24,52 @@ export const layout = "vertical";
 export const pages = {};
 pages["users"] = ["username", "role", "email", "actions"];
 pages["tags"] = ["_id", "usage", "actions"];
-pages["datasets"] = [
-  "name",
-  "metadata",
-  "tags",
-  "actions",
-];
-pages["models"] = [
-  "name",
-  "metadata",
-  "status",
-  "tags",
-  "actions",
-];
-pages["algorithms"] = [
-  "name",
-  "metadata",
-  "status",
-  "tags",
-  "actions",
-];
+pages["datasets"] = ["name", "metadata", "tags", "actions"];
+pages["models"] = ["name", "metadata", "status", "tags", "actions"];
+pages["algorithms"] = ["name", "metadata", "status", "tags", "actions"];
 
 //version pages: key is the model + "Version", value is an array that contains the fields shown to users
 //action is a special field that will enable actions for each row || still required, future version may have it removed
 export const versionPages = {};
-versionPages["datasets"] = ["ordinal", "original", "timestamp", "size", "actions"];
-versionPages["models"] = ["ordinal", "original", "timestamp", "size", "actions"];
-versionPages["algorithms"] = ["ordinal", "original", "timestamp", "size", "actions"];
-
+versionPages["datasets"] = [
+  "ordinal",
+  "original",
+  "timestamp",
+  "size",
+  "actions",
+];
+versionPages["models"] = [
+  "ordinal",
+  "original",
+  "timestamp",
+  "size",
+  "actions",
+];
+versionPages["algorithms"] = [
+  "ordinal",
+  "original",
+  "timestamp",
+  "size",
+  "actions",
+];
 
 //alias dictionary: key is the page, value are object with pairs of the fields that will be renamed into page table header ("key" is renamed as "value")
 export const aliasPages = {};
-aliasPages["datasets"] = { original: "filename", timestamp: "data", size: "size (byte)" };
-aliasPages["models"] = { original: "filename", timestamp: "data", size: "size (byte)" };
-aliasPages["algorithms"] = { original: "filename", timestamp: "data", size: "size (byte)" };
+aliasPages["datasets"] = {
+  original: "filename",
+  timestamp: "data",
+  size: "size (KB)",
+};
+aliasPages["models"] = {
+  original: "filename",
+  timestamp: "data",
+  size: "size (KB)",
+};
+aliasPages["algorithms"] = {
+  original: "filename",
+  timestamp: "data",
+  size: "size (KB)",
+};
 //aliasPages["features"] = { _id: "Feature Name", actions: "Actions" };
 //aliasPages["tags"] = { _id: "Tag Name", actions: "Actions" };
 //aliasPages["devices"] = { _id: "Device Name", actions: "Actions" };
@@ -72,20 +87,29 @@ pageActions["algorithmsVersion"] = ["downloadVersion", "deleteVersion"];
 
 //view dictionary: key is the page, value is an array that contains the fields shown to the user with "view" action
 export const viewFields = {};
-viewFields["users"] = ["username", "role", "email","_id"];
+viewFields["users"] = ["username", "role", "email", "_id"];
 viewFields["tags"] = ["_id", "usage", "owner", "actions"];
-viewFields["datasets"] = [ "name", "metadata", "versions","tags", "users", "visibility", "_id","owner"];
+viewFields["datasets"] = [
+  "name",
+  "metadata",
+  "versions",
+  "tags",
+  "users",
+  "visibility",
+  "_id",
+  "owner",
+];
 viewFields["models"] = [
   "name",
   "metadata",
   "versions",
   "status",
-  "datasets",  
+  "datasets",
   "tags",
-  "users",  
+  "users",
   "visibility",
   "_id",
-  "owner"
+  "owner",
 ];
 viewFields["algorithms"] = [
   "name",
@@ -94,12 +118,11 @@ viewFields["algorithms"] = [
   "status",
   "datasets",
   "tags",
-  "users",  
+  "users",
   "visibility",
   "_id",
-  "owner"
+  "owner",
 ];
-
 
 //edit dictionary: key is the page, value is an array that contains the fields that can be edited with "edit" action
 //fields should be specified in the same format of the object that will be represented:
@@ -114,34 +137,34 @@ export const editFields = {};
 //editFields["tags"] = { _id:"", usage: "" };
 
 editFields["models"] = {
-  name: "",      
-  metadata: [{ name: "", value: "" }],  
-  status: "",    
+  name: "",
+  metadata: [{ name: "", value: "" }],
+  status: "",
   datasets: [""],
-  tags: [""], 
+  tags: [""],
   users: [""],
-  visibility: ""
+  visibility: "",
 };
 
 editFields["algorithms"] = {
-  name: "",     
-  metadata: [{ name: "", value: "" }],  
-  status: "",     
+  name: "",
+  metadata: [{ name: "", value: "" }],
+  status: "",
   datasets: [""],
-  tags: [""], 
+  tags: [""],
   users: [""],
-  visibility: ""
+  visibility: "",
 };
 
 editFields["datasets"] = {
-  name: "",   
+  name: "",
   metadata: [{ name: "", value: "" }],
   tags: [""],
   users: [""],
-  visibility: ""
+  visibility: "",
 };
 
-editFields["users"]={username:"",email:""}
+editFields["users"] = { username: "", email: "" };
 
 //add dictionary: key is the page, value is an array that contains the fields that can will be used to post the entity
 //fields should be specified in the same format of the objet that will be represented:
@@ -159,35 +182,35 @@ addFields["tenants"] = {
   email: "",
   phone: "",
   admin_username: "",
-  admin_password: ""
+  admin_password: "",
 };
 
 addFields["datasets"] = {
-  name: "",  
+  name: "",
   metadata: [{ name: "", value: "" }],
   tags: [""],
   users: [""],
-  visibility: ""
+  visibility: "",
 };
 
 addFields["models"] = {
-  name: "",  
+  name: "",
   metadata: [{ name: "", value: "" }],
   status: "",
   datasets: [""],
   tags: [""],
   users: [""],
-  visibility: ""  
+  visibility: "",
 };
 
 addFields["algorithms"] = {
-  name: "",  
+  name: "",
   metadata: [{ name: "", value: "" }],
   status: "",
   datasets: [""],
   tags: [""],
   users: [""],
-  visibility: ""
+  visibility: "",
 };
 
 addFields["versions"] = {
@@ -195,7 +218,7 @@ addFields["versions"] = {
   file: "",
 };
 
-addFields["users"] = { username: "", password: "", email:"", role: "" };
+addFields["users"] = { username: "", password: "", email: "", role: "" };
 
 addFields["tags"] = { _id: "", usage: "" };
 
@@ -205,14 +228,14 @@ addFields["tags"] = { _id: "", usage: "" };
 //
 export const editFieldsSpecifier = {};
 //editFieldsSpecifier["features"] = {
-  //_id: { type: "disable", policy: isFeatureInUse },
-  //items: { type: "disable", policy: isFeatureInUse },
+//_id: { type: "disable", policy: isFeatureInUse },
+//items: { type: "disable", policy: isFeatureInUse },
 //}
 
 editFieldsSpecifier["users"] = {
   username: { type: "disable", policy: alwaysTrue },
 };
-editFieldsSpecifier["datasets"] = {  
+editFieldsSpecifier["datasets"] = {
   name: { type: "disable", policy: alwaysTrue },
 };
 editFieldsSpecifier["models"] = {
@@ -226,9 +249,9 @@ editFieldsSpecifier["algorithms"] = {
 export const addTypes = {};
 addTypes["users"] = ["form", "file"];
 addTypes["tags"] = ["form", "file"];
-addTypes["models"] = ["form", "file"];
-addTypes["algorithms"] = ["form", "file"];
-addTypes["datasets"] = ["form", "file"];
+addTypes["models"] = ["form"];
+addTypes["algorithms"] = ["form"];
+addTypes["datasets"] = ["form"];
 addTypes["versions"] = ["file"];
 addTypes["tenants"] = ["form"];
 
@@ -237,27 +260,33 @@ addTypes["tenants"] = ["form"];
 export const fetchedPageTypes = {};
 fetchedPageTypes["users"] = { role: "UserRoles" };
 fetchedPageTypes["datasets"] = { visibility: "VisibilityTypes" };
-fetchedPageTypes["models"] = { visibility: "VisibilityTypes", status: "ModelStatusTypes" };
-fetchedPageTypes["algorithms"] = { visibility: "VisibilityTypes", status: "AlgorithmStatusTypes" };
+fetchedPageTypes["models"] = {
+  visibility: "VisibilityTypes",
+  status: "ModelStatusTypes",
+};
+fetchedPageTypes["algorithms"] = {
+  visibility: "VisibilityTypes",
+  status: "AlgorithmStatusTypes",
+};
 fetchedPageTypes["tags"] = { usage: "UsageTypes" };
 
 //dictionary for fetched data
 //data is fetched on the according resource route and matched with fields following this dictionary
 //the value of the specified field is the route to search for data. _ids of that route will be used as options
 export const fetchedPageData = {};
-/*fetchedPageData["tags"] = { tags: "tags" };
-fetchedPageData["things"] = { tags: "tags" };
-fetchedPageData["devices"] = { features: "features" };
-fetchedPageData["features"] = { tags: "tags" };
-fetchedPageData["measurements"] = {
-  device: "devices",
-  thing: "things",
-  tags: "tags",
-};*/
+fetchedPageData["tags"] = { tags: "tags" };
 
-fetchedPageData["datasets"] = { users: "users",tags:"tags" };
-fetchedPageData["models"] = { datasets: "datasets", users: "users",tags:"tags" };
-fetchedPageData["algorithms"] = { datasets: "datasets", users: "users",tags:"tags" };
+fetchedPageData["datasets"] = { users: "users", tags: "tags" };
+fetchedPageData["models"] = {
+  datasets: "datasets",
+  users: "users",
+  tags: "tags",
+};
+fetchedPageData["algorithms"] = {
+  datasets: "datasets",
+  users: "users",
+  tags: "tags",
+};
 
 //restriction dictionary: key is the page, value is an array of roles allowed to access to that page
 export const restrictionPages = {};

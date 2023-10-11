@@ -149,6 +149,8 @@ export default function ContentTable(props) {
                       }
                       if (e === "date" || e === "timestamp")
                         return <td>{FormatDate(row[e])}</td>;
+                      if (e === "size")
+                        return <td>{Math.ceil(row[e]/1024)}</td>;
                       return <td>{row[e]}</td>;
                     })
                   )}

@@ -1,12 +1,11 @@
 import { base_api_url } from "../config";
 import { GetProgressbarValue, updateProgressbar } from "./progressbar_manager";
 
-import axios from "axios"; 
+import axios from "axios";
 
 export const instance = axios.create({});
 
 export let api_url;
-
 
 export let notificationManager = {
   PushNotification: (obj) => {},
@@ -16,7 +15,6 @@ export let notificationManager = {
 
 //set APIs url according to configuration or GUI host
 export function SetAPIUrl() {
-  console.log(window.location.origin);
   api_url =
     base_api_url !== undefined
       ? base_api_url
@@ -330,8 +328,8 @@ export async function delete_generic(resource_type, id, token = undefined) {
             id +
             ", of type: " +
             resource_type +
-            ". " +
-            error.message,
+            ". Error: " +
+            error.response.data.details,
         });
         if (error.statusCode === 404) {
           //Not found
@@ -616,6 +614,12 @@ export async function DownloadToTarget(route, filename, setNow) {
             push();
           },
         });
+      })
+      .then(() => {
+        resolve(true);
+      })
+      .catch((error) => {
+        reject({ error: error }); //false;
       });
   });
 }
