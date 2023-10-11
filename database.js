@@ -22,8 +22,8 @@ exports.init = async function(mode){
     // Select MongoDb server (in memory version of testing)
     if(mode === "test") {
         const { MongoMemoryServer } = require('mongodb-memory-server');
-        const mongod = new MongoMemoryServer();
-        uri = await mongod.getUri();
+        const mongod = await MongoMemoryServer.create();
+        uri = mongod.getUri();
     }
     else {
         if (process.argv.includes('docker')) process.env.DATABASE = process.env.DATABASE.replace('localhost', 'database');
