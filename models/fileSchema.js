@@ -9,7 +9,8 @@ const fileSchema = new mongoose.Schema({
     encoding: { type: String, required: true }, 
     mimetype: { type: String, required: true },
     size: { type: Number, required: true },
-    timestamp: { type: Date, default: Date.now }},
+    timestamp: { type: Date, default: Date.now },
+    description: { type: String }},
     { _id: false }  
 );
 

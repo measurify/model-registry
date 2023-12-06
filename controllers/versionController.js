@@ -26,7 +26,8 @@ exports.post = async (req, res) => {
     result = await checker.canModify(req, res); if (result != true) { await filemanager.delete(req.file.filename); return result };
     //result = await checker.isAlreadyContained(req, res, 'versions', 'ordinal', req.file.originalname); if (result != true) { await filemanager.delete(req.file.filename); return result };
     result = await checker.createOrdinal(req,res); if (result != true)  { await filemanager.delete(req.file.filename); return result };
-    req.body = { versions: { add: [ { ordinal:req.ordinal, key: req.file.filename, original: req.file.originalname, encoding: req.file.encoding, mimetype: req.file.mimetype, size: req.file.size } ] } }  
+    if(req.body&&!req.body.description)req.body.description="";
+    req.body = { versions: { add: [ { ordinal:req.ordinal, key: req.file.filename, original: req.file.originalname, encoding: req.file.encoding, mimetype: req.file.mimetype, size: req.file.size, description:req.body.description } ] } }  
     return await controller.updateResource(req, res, ['versions'], model);
 };
 
